@@ -1,8 +1,44 @@
 {% extends "base.html" %}
 
-{% block title %}Home Page{% endblock %}
+{% block title %}Exercise Tracker{% endblock %}
 
 {% block content %}
-    <h1 class="text-danger">Welcome, {{ name }}!</h1>
-    <p>This is the home page of our Flask app.</p>
+    <div class="bg-dark text-white min-vh-100 rounded">
+        <div class="container mt-5 p-4 rounded">
+            <h1 class="text-danger">Welcome to Your Exercise Tracker, {{ name }}!</h1>
+            <p>Track your workouts, set goals, and monitor your progress.</p>
+            
+            <div class="row mt-4">
+                <div class="col-md-4 d-flex">
+                    <div class="card bg-secondary text-white border-0 flex-fill">
+                        <div class="card-body">
+                            <h4 class="card-title text-body">Log a Workout</h4>
+                            <p class="card-text">Record your exercises and track your performance.</p>
+                            <a href="/log" class="btn btn-danger">Log Workout</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 d-flex">
+                    <div class="card bg-secondary text-white border-0 flex-fill">
+                        <div class="card-body">
+                            <h4 class="card-title text-body">View Progress</h4>
+                            <p class="card-text">Check your workout history and see your improvements over time.</p>
+                            <a href="/progress" class="btn btn-danger">View Progress</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 d-flex">
+                    <div class="card bg-secondary text-white border-0 flex-fill">
+                        <div class="card-body">
+                            <h4 class="card-title text-body">Set Goals</h4>
+                            <p class="card-text">Define your fitness goals and stay motivated.</p>
+                            <a href="/goals" class="btn btn-danger">Set Goals</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
