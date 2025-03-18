@@ -18,12 +18,8 @@ class User(db.Model):
     name = db.Column(db.String(80), nullable=False)
 
 @app.route("/")
-def home():
-    return render_template("index.html")
-    
-@app.route("/db")
-def db_status():
-    return "SQLite is connected!"
+def index():
+    return render_template("index.html", name="Henk")
     
 if __name__ == "__main__":
     # Create the database file if it doesn't exist
