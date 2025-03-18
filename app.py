@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from models import db
+from models import db, Exercise
 import os
 
 app = Flask(__name__)
@@ -19,6 +19,12 @@ db.init_app(app)  # Initialize db with app
 @app.route("/")
 def index():
     return render_template("index.html", name="Henk")
+
+# Home route - List all exercises
+@app.route('/exercise')
+def exercise():
+    exercises = Exercise.query.all()
+    return render_template('exercise/index.html', exercises=exercises)
 
 # Create tables if necessary
 with app.app_context():
