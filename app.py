@@ -20,7 +20,15 @@ class User(db.Model):
 @app.route("/")
 def index():
     return render_template("index.html", name="Henk")
-    
+
+@app.route("/goals")
+def goals():
+    return render_template("goals.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
 if __name__ == "__main__":
     # Create the database file if it doesn't exist
     with app.app_context():
