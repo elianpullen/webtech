@@ -23,5 +23,42 @@ init_routes(app) # import routes
 with app.app_context():
     db.create_all()
 
+@app.route("/")
+def index():
+    return render_template("index.html", name="Henk")
+
+@app.route("/goals")
+def goals():
+    return render_template("goals.html")
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route('/log', methods=['GET', 'POST'])
+def log():
+    if request.method == 'POST':
+        workout_type = request.form['workout_type']
+        exercise = request.form.get('exercise', '')
+        duration = request.form['duration']
+        date = request.form['date']
+        notes = request.form.get('notes', '')
+
+        # Handle strength-specific fields
+        reps = request.form.get('reps', None)
+        weight = request.form.get('weight', None)
+
+        # Process the data (e.g., save to a database)
+        print(f"Workout logged: {workout_type}, {exercise}, {duration} minutes, {date}, Reps: {reps}, Weight: {weight}, Notes: {notes}")
+
+        # Redirect to another page (e.g., progress page) after logging
+        return redirect(url_for('index'))
+
+    return render_template('log.html')
+
+@app.route("/progress")
+def progress():
+    return render_template("progress.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
