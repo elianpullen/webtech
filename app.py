@@ -1,21 +1,27 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, request, redirect, url_for    
+from models import db, Exercise
+from routes import init_routes
 import os
 
 app = Flask(__name__)
 
 # Configure the SQLite database
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # Get the base directory
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(BASE_DIR, 'database.db')}"
+instance_dir = os.path.join(BASE_DIR, 'instance')
+if not os.path.exists(instance_dir):
+    os.makedirs(instance_dir)
+
+# Configure the database URI
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(instance_dir, 'database.db')}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Initialize the database
-db = SQLAlchemy(app)
+db.init_app(app)  # Initialize db with app
 
-# Create a simple model
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
+init_routes(app) # import routes
+
+# Create tables if necessary
+with app.app_context():
+    db.create_all()
 
 @app.route("/")
 def index():
@@ -55,9 +61,4 @@ def progress():
     return render_template("progress.html")
 
 if __name__ == "__main__":
-    # Create the database file if it doesn't exist
-    with app.app_context():
-        db.create_all()
-        print("Database created successfully!")
-    
     app.run(debug=True)
