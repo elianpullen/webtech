@@ -5,12 +5,13 @@
 {% block content %}
 
 <div class="bg-dark rounded-3 p-4">
-<form action="" method="POST">
-    <h1 class="text-white">Edit User</h1>
-    <label class="text-white" for="name">Name:</label>
-    <input type="text" id="name" name="name" class="bg-secondary rounded-2 " value="{{ exercise.name }}" required><br><br>
-    <button class="btn btn-success" type="submit">Save</button>
-</form>
+    <form action="" method="POST">
+        <h1 class="text-white">Edit User</h1>
+        <label class="text-white" for="name">Name:</label>
+        <input type="text" id="name" name="name" class="bg-secondary rounded-2 " value="{{ exercise.name }}"
+            required><br><br>
+        <button class="btn btn-success" type="submit">Save</button>
+    </form>
 </div>
 
 {% endblock %}
