@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Exercises Overview{% endblock %}
+
+{% block content %}
+
+<!--TODO: add rounded to table-->
+<table class="table table-dark table-striped">
+    <thead>
+      <tr>
+        <th colspan="5" class="">
+          <!-- Text inside the table header row -->
+          <div class="d-flex justify-content-between align-items-center">
+            <p class="text-white mb-0">Exercises List</p>
+            <button type="button" class="btn btn-success">
+              <a href="{{ url_for('add_exercise') }}" class="text-white text-decoration-none">+</a>
+            </button>
+          </div>
+        </th>
+      </tr>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Category</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for exercise in exercises %}
+        <tr>
+            <td>{{ exercise['id']}}</td>
+            <td>{{ exercise['name']}}</td>
+            <td>{{ exercise['description']}}</td>
+            <td>{{ exercise['category']}}</td>
+            <td>
+              <!-- Edit Button -->
+              <button type="button" class="btn btn-warning">
+                <a href="{{ url_for('edit_exercise', id=exercise.id) }}" class="text-white text-decoration-none">Edit</a>
+              </button>
+              <!-- Delete Button -->
+              <button type="button" class="btn btn-danger">
+                <a href="{{ url_for('delete_exercise', id=exercise.id) }}" class="text-white text-decoration-none">Delete</a>
+              </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
