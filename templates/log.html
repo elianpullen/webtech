@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Log Workout - Exercise Tracker{% endblock %}
+
+{% block content %}
+<div class="container mt-5 p-4 rounded bg-dark text-white">
+    <h1 class="text-danger text-center mb-4">Log Your Workout</h1>
+    <form action="{{ url_for('log') }}" method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="workoutType" class="form-label">Workout Type</label>
+            <select class="form-select" id="workoutType" name="workout_type" required>
+                <option value="" disabled selected>Select a workout type</option>
+                <option value="cardio">Cardio</option>
+                <option value="strength">Strength</option>
+                <option value="flexibility">Flexibility</option>
+                <option value="balance">Balance</option>
+            </select>
+            <div class="invalid-feedback">Please select a workout type.</div>
+        </div>
+
+        <div class="mb-3" id="exerciseGroup" style="display: none;">
+            <label for="exercise" class="form-label">Exercise</label>
+            <select class="form-select" id="exercise" name="exercise">
+                <!-- Options will be dynamically populated -->
+            </select>
+            <div class="invalid-feedback">Please select an exercise.</div>
+        </div>
+
+        <!-- Reps and Weight Fields -->
+        <div class="mb-3" id="strengthFields" style="display: none;">
+            <label for="reps" class="form-label">Reps</label>
+            <input type="number" class="form-control" id="reps" name="reps" min="1">
+            <div class="invalid-feedback">Please enter the number of reps.</div>
+
+            <label for="weight" class="form-label mt-3">Weight (in kg)</label>
+            <input type="number" class="form-control" id="weight" name="weight" min="1">
+            <div class="invalid-feedback">Please enter the weight used.</div>
+        </div>
+
+        <!-- Duration Field -->
+        <div class="mb-3" id="durationField">
+            <label for="duration" class="form-label">Duration (in minutes)</label>
+            <input type="number" class="form-control" id="duration" name="duration" min="1" required>
+            <div class="invalid-feedback">Please enter a valid duration.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" class="form-control" id="date" name="date" required>
+            <div class="invalid-feedback">Please select a date.</div>
+        </div>
+        <div class="mb-3">
+            <label for="notes" class="form-label">Notes (optional)</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-danger w-100">Log Workout</button>
+    </form>
+</div>
+
+<script>
+    // Define exercises for each workout type
+    const exercises = {
+        cardio: ["Running", "Cycling", "Swimming"],
+        strength: ["Bench Press", "Back Rows", "Leg Press"],
+        flexibility: ["Yoga", "Stretching", "Pilates"],
+        balance: ["Balance Beam", "Single-Leg Stance", "Bosu Ball Exercises"]
+    };
+
+    const workoutTypeSelect = document.getElementById("workoutType");
+    const exerciseGroup = document.getElementById("exerciseGroup");
+    const exerciseSelect = document.getElementById("exercise");
+    const strengthFields = document.getElementById("strengthFields");
+    const durationField = document.getElementById("durationField");
+
+    // Event listener to update exercises and toggle fields based on workout type
+    workoutTypeSelect.addEventListener("change", function () {
+        const selectedType = workoutTypeSelect.value;
+
+        // Clear previous exercise options
+        exerciseSelect.innerHTML = "";
+
+        if (exercises[selectedType]) {
+            // Populate exercise options
+            exercises[selectedType].forEach(exercise => {
+                const option = document.createElement("option");
+                option.value = exercise.toLowerCase().replace(/\s+/g, "_");
+                option.textContent = exercise;
+                exerciseSelect.appendChild(option);
+            });
+
+            // Show the exercise dropdown
+            exerciseGroup.style.display = "block";
+        } else {
+            // Hide the exercise dropdown if no exercises are available
+            exerciseGroup.style.display = "none";
+        }
+
+        // Show or hide strength-specific fields and duration field
+        if (selectedType === "strength") {
+            strengthFields.style.display = "block";
+            durationField.style.display = "none"; // Hide duration for strength
+        } else {
+            strengthFields.style.display = "none";
+            durationField.style.display = "block"; // Show duration for other types
+        }
+    });
+</script>
+{% endblock %}
