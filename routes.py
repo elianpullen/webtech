@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, session, flash
 from models import db, Exercise
 
 # Define the route registration function
@@ -85,3 +85,19 @@ def routes(app):
             return redirect(url_for('progress'))
 
         return render_template('progress.html', completed_workouts=completed_workouts, body_weight=body_weight, body_fat=body_fat)
+    
+    @app.route('/login', methods=['GET', 'POST'])
+    def login():
+        if request.method == 'POST':
+            email = request.form['email']
+            password = request.form['password']
+
+            # Replace this with actual user authentication logic (e.g., database query)
+            if email == "user@example.com" and password == "password123":
+                session['user'] = email  # Store user info in session
+                flash('Login successful!', 'success')
+                return redirect(url_for('index'))
+            else:
+                flash('Invalid email or password. Please try again.', 'danger')
+
+        return render_template('login.html')

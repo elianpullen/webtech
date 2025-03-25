@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Exercise Tracker{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card bg-dark text-white shadow-lg" style="width: 100%; max-width: 400px;">
+        <div class="card-body">
+            <h1 class="text-danger text-center mb-4">Login</h1>
+            <form action="{{ url_for('login') }}" method="POST" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <div class="invalid-feedback">Please enter your password.</div>
+                </div>
+                <button type="submit" class="btn btn-danger w-100">Login</button>
+            </form>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
