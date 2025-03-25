@@ -56,9 +56,24 @@ def log():
 
     return render_template('log.html')
 
-@app.route("/progress")
+@app.route('/progress', methods=['GET', 'POST'])
 def progress():
-    return render_template("progress.html")
+    # Example: Replace with actual database logic
+    completed_workouts = 15  # Replace with a query to count completed workouts
+    body_weight = 75  # Replace with the user's current weight from the database
+    body_fat = 22  # Replace with the user's current body fat percentage from the database
+
+    if request.method == 'POST':
+        body_weight = request.form['body_weight']
+        body_fat = request.form['body_fat']
+
+        # Process the data (e.g., save to a database)
+        print(f"Progress updated: Weight: {body_weight} kg, Body Fat: {body_fat}%")
+
+        # Redirect to avoid form resubmission
+        return redirect(url_for('progress'))
+
+    return render_template('progress.html', completed_workouts=completed_workouts, body_weight=body_weight, body_fat=body_fat)
 
 if __name__ == "__main__":
     app.run(debug=True)

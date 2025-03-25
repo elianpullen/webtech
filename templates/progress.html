@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Progress - Exercise Tracker{% endblock %}
+
+{% block content %}
+<div class="container mt-5 p-4 rounded bg-dark text-white">
+    <h1 class="text-danger text-center mb-4">Track Your Progress</h1>
+
+    <!-- Form to input weight and body fat -->
+    <form action="{{ url_for('progress') }}" method="POST" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label for="body_weight" class="form-label">Weight (in kg)</label>
+            <input type="number" class="form-control" id="body_weight" name="body_weight" min="1" required>
+            <div class="invalid-feedback">Please enter your weight.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="bodyFat" class="form-label">Body Fat Percentage (%)</label>
+            <input type="number" class="form-control" id="bodyFat" name="body_fat" min="1" max="100" required>
+            <div class="invalid-feedback">Please enter your body fat percentage.</div>
+        </div>
+
+        <button type="submit" class="btn btn-danger w-100">Update Progress</button>
+    </form>
+
+    <!-- Display number of completed workouts -->
+    <div class="mt-5">
+        <h2 class="text-center">Your Progress</h2>
+        <p class="text-center lead">
+            You have completed <strong>{{ completed_workouts }}</strong> workouts so far!
+        </p>
+        <p class="text-center lead">
+            Great job!
+        </p>
+    </div>
+
+    <!-- Graphs Section -->
+    <div class="mt-5">
+        <h2 class="text-center">Progress Charts</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <canvas id="bodyWeightChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <canvas id="bodyFatChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data for Body Weight Chart
+    const bodyWeightData = {
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],// Replace with dynamic values
+        datasets: [{
+            label: "Weight (kg)",
+            data: [80, 78, 76, {{ body_weight | default(75) }}], // Replace with dynamic values
+            backgroundColor: "#007bff",
+            borderColor: "#007bff",
+            borderWidth: 1
+        }]
+    };
+
+    // Data for Body Fat Chart
+    const bodyFatData = {
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],// Replace with dynamic values
+        datasets: [{
+            label: "Body Fat (%)",
+            data: [25, 24, 23, {{ body_fat | default(22) }}], // Replace with dynamic values
+            backgroundColor: "#28a745",
+            borderColor: "#28a745",
+            borderWidth: 1
+        }]
+    };
+
+    // Config for Body Weight Chart
+    const bodyWeightConfig = {
+        type: "line",
+        data: bodyWeightData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                title: { display: true, text: "Body Weight Progress" }
+            }
+        }
+    };
+
+    // Config for Body Fat Chart
+    const bodyFatConfig = {
+        type: "line",
+        data: bodyFatData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                title: { display: true, text: "Body Fat Percentage Progress" }
+            }
+        }
+    };
+
+    // Render Charts
+    const bodyWeightChart = new Chart(
+        document.getElementById("bodyWeightChart"),
+        bodyWeightConfig
+    );
+
+    const bodyFatChart = new Chart(
+        document.getElementById("bodyFatChart"),
+        bodyFatConfig
+    );
+</script>
+{% endblock %}
