@@ -6,10 +6,14 @@ def routes(app):
     def index():
         return render_template("index.html", name="Henk")
 
+    @app.route('/admin/')
+    def admin():
+        exercises = Exercise.query.all()
+        return render_template('admin/index.html', exercises=exercises)
+
     @app.route('/admin/exercise/')
     def exercise():
-        exercises = Exercise.query.all()
-        return render_template('admin/exercise/index.html', exercises=exercises)
+        return render_template('admin/exercise/index.html')
 
     @app.route('/admin/exercise/edit/<int:id>/', methods=['GET', 'POST'])
     def edit_exercise(id):
