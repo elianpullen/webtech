@@ -94,6 +94,41 @@ def routes(app):
         db.session.commit()
         return redirect(url_for('user'))
 
+    @app.route('/admin/category/')
+    def category():
+        categories = Category.query.all()
+        return render_template("admin/category/index.html/", categories=categories)       
+
+    @app.route('/admin/category/add/', methods=['GET', 'POST'])
+    def add_category():
+        if request.method == 'POST':
+            name = request.form.get('name')
+                
+            new_category = Category(name=name)
+            db.session.add(new_category)
+            db.session.commit()
+            
+            return redirect(url_for('category'))
+        return render_template('/admin/category/add.html')
+    
+    @app.route('/admin/category/edit/<int:id>/', methods=['GET', 'POST'])
+    def edit_category(id):
+        category = Category.query.get_or_404(id)
+        if request.method == 'POST':
+            name = request.form.get('name')
+            category.name = name
+            db.session.commit()
+
+            return redirect(url_for('category'))
+        return render_template('/admin/category/edit.html', category=category)
+
+    @app.route('/admin/category/delete/<int:id>', methods=['POST'])
+    def delete_category(id):
+        category = Category.query.get_or_404(id)
+        db.session.delete(category)
+        db.session.commit()
+        return redirect(url_for('category'))
+
     @app.route("/goals/")
     def goals():
         return render_template("goals.html")
