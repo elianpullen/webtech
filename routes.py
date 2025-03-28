@@ -72,12 +72,12 @@ def routes(app):
     def edit_user(id):
         user = User.query.get_or_404(id)
         if request.method == 'POST':
-            username = request.form.get('username')
+            name = request.form.get('name')
             password = request.form.get('password')
             is_admin = request.form.get('is_admin')
             bodyweight = request.form.get('bodyweight')
             bodyfat = request.form.get('bodyfat')
-            user.username = username
+            user.name = name
             user.password = password  
             user.is_admin = is_admin
             user.bodyweight = bodyweight
