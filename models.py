@@ -38,3 +38,24 @@ class Exercise(db.Model):
         self.name = name
         self.description = description
         self.category_id = category_id
+
+class Workout(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False, unique=True)
+    #category
+    reps = db.Column(db.Integer, nullable=True)
+    weight = db.Column(db.Integer, nullable=True)
+    duration = db.Column(db.Interval, nullable=True)
+    date = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    note = db.Column(db.String(255), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) # Foreign Key to User.id
+
+    user = db.relationship('User', back_populates='workouts')
+
+    def __init__(self, name, reps, weight, duration, note, user_id): # add constructor
+        self.name = name
+        self.reps = reps
+        self.weight = weight
+        self.duration = duration
+        self.date = date
+        self.note = note
