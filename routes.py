@@ -1,52 +1,61 @@
 from flask import render_template, request, redirect, url_for
-from models import db, Exercise
+from models import db, Exercise, Category
 
-# Define the route registration function
 def routes(app):
     @app.route("/")
     def index():
         return render_template("index.html", name="Henk")
 
-    @app.route('/exercise')
-    def exercise():
+    @app.route('/admin/')
+    def admin():
         exercises = Exercise.query.all()
-        return render_template('admin/exercise/index.html', exercises=exercises)
+        return render_template('admin/index.html', exercises=exercises)
 
-    @app.route('/edit/<int:id>', methods=['GET', 'POST'])
+    @app.route('/admin/exercise/')
+    def exercise():
+        return render_template('admin/exercise/index.html')
+
+    @app.route('/admin/exercise/edit/<int:id>/', methods=['GET', 'POST'])
     def edit_exercise(id):
+        categories = Category.query.all()
         exercise = Exercise.query.get_or_404(id)
         if request.method == 'POST':
             exercise.name = request.form['name']
+            exercise.description = request.form['description']
+            exercise.category = request.form['category']
             db.session.commit()
             return redirect(url_for('exercise'))
-        return render_template('admin/exercise/edit.html', exercise=exercise)
+        return render_template('admin/exercise/edit.html', exercise=exercise, categories=categories)
 
-    @app.route('/exercise/add', methods=['GET', 'POST'])
+    @app.route('/admin/exercise/add/', methods=['GET', 'POST'])
     def add_exercise():
+        categories = Category.query.all()
         if request.method == 'POST':
             name = request.form['name']
-            new_exercise = Exercise(name=name)
+            category_id = request.form['category']
+            description = request.form['description']
+            new_exercise = Exercise(name=name, description=description, category_id=category_id)
             db.session.add(new_exercise)
             db.session.commit()
             return redirect(url_for('exercise'))
-        return render_template('admin/exercise/add.html')
+        return render_template('admin/exercise/add.html', categories=categories)
 
-    @app.route('/exercise/delete/<int:id>', methods=['POST'])
+    @app.route('/admin/exercise/delete/<int:id>/', methods=['POST'])
     def delete_exercise(id):
         exercise = Exercise.query.get_or_404(id)
         db.session.delete(exercise)
         db.session.commit()
         return redirect(url_for('exercise'))
     
-    @app.route("/goals")
+    @app.route("/goals/")
     def goals():
         return render_template("goals.html")
 
-    @app.route("/about")
+    @app.route("/about/")
     def about():
         return render_template("about.html")
 
-    @app.route('/log', methods=['GET', 'POST'])
+    @app.route('/log/', methods=['GET', 'POST'])
     def log():
         if request.method == 'POST':
             workout_type = request.form['workout_type']
@@ -67,7 +76,7 @@ def routes(app):
 
         return render_template('log.html')
 
-    @app.route('/progress', methods=['GET', 'POST'])
+    @app.route('/progress/', methods=['GET', 'POST'])
     def progress():
         # Example: Replace with actual database logic
         completed_workouts = 15  # Replace with a query to count completed workouts

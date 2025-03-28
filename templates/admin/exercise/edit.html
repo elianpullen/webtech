@@ -4,14 +4,34 @@
 
 {% block content %}
 
-<div class="bg-dark rounded-3 p-4">
+<div class="container mt-5 p-4 rounded bg-dark text-white">
+    <h1 class="text-danger text-center mb-4">Edit Exercise</h1>
     <form action="" method="POST">
-        <h1 class="text-white">Edit User</h1>
-        <label class="text-white" for="name">Name:</label>
-        <input type="text" id="name" name="name" class="bg-secondary rounded-2 " value="{{ exercise.name }}"
-            required><br><br>
-        <button class="btn btn-success" type="submit">Save</button>
+        <div class="mb-3" id="name">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ exercise.name }}" required>
+        </div>
+
+        <div class="mb-3" id="description">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" class="form-control" id="description" name="description"
+                value="{{ exercise.description }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select" id="category" name="category" required>
+                <option value="{{ exercise.category.id }}" disabled selected>{{ exercise.category.name }}</option>
+                {% for category in categories %}
+                {% if category.id != exercise.category.id %}
+                <option value="{{category['id']}}">{{category['name']}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-danger w-100">Edit Exercise</button>
     </form>
+    <a href="{{ url_for('exercise') }}" class="btn btn-secondary w-100 mt-3">Back to Exercises</a>
 </div>
 
 {% endblock %}

@@ -3,23 +3,32 @@
 {% block title %}Exercises Overview{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Add New Exercise</h2>
-    <form action="/exercise/add" method="POST">
-        <div class="mb-3">
-            <label for="name" class="form-label">Exercise Name</label>
+
+<div class="container mt-5 p-4 rounded bg-dark text-white">
+    <h1 class="text-danger text-center mb-4">Add New Exercise</h1>
+    <form action="{{ url_for('add_exercise') }}" method="POST">
+        <div class="mb-3" id="name">
+            <label for="name" class="form-label">Name</label>
             <input type="text" class="form-control" id="name" name="name" required>
         </div>
+
+        <div class="mb-3" id="description">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" class="form-control" id="description" name="description" required>
+        </div>
+
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
-            <input type="text" class="form-control" id="category" name="category" required>
+            <select class="form-select" id="category" name="category" required>
+                <option value="" disabled selected>Select a category</option>
+                {% for category in categories %}
+                <option value="{{category['id']}}">{{category['name']}}</option>
+                {% endfor %}
+            </select>
         </div>
-        <div class="mb-3">
-            <label for="duration" class="form-label">Duration (minutes)</label>
-            <input type="number" class="form-control" id="duration" name="duration" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Add Exercise</button>
+        <button type="submit" class="btn btn-danger w-100">Add Exercise</button>
     </form>
+    <a href="{{ url_for('exercise') }}" class="btn btn-secondary w-100 mt-3">Back to Exercises</a>
 </div>
 
 {% endblock %}
