@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for
-from models import db, Exercise, Category
+from models import db, Exercise, Category, User
 
 def routes(app):
     @app.route("/")
@@ -47,6 +47,53 @@ def routes(app):
         db.session.commit()
         return redirect(url_for('exercise'))
     
+    @app.route('/admin/user/')
+    def user():
+        users = User.query.all()
+        return render_template("admin/user/index.html/", users=users)       
+
+    @app.route('/admin/user/add/', methods=['GET', 'POST'])
+    def add_user():
+        if request.method == 'POST':
+            name = request.form.get('name')
+            password = request.form.get('password')
+            is_admin = request.form.get('is_admin')
+            bodyweight = request.form.get('bodyweight')
+            bodyfat = request.form.get('bodyfat')
+                
+            new_user = User(name=name, password=password, is_admin=is_admin, bodyweight=bodyweight, bodyfat=bodyfat)
+            db.session.add(new_user)
+            db.session.commit()
+            
+            return redirect(url_for('user'))
+        return render_template('/admin/user/add.html')
+    
+    @app.route('/admin/user/edit/<int:id>/', methods=['GET', 'POST'])
+    def edit_user(id):
+        user = User.query.get_or_404(id)
+        if request.method == 'POST':
+            username = request.form.get('username')
+            password = request.form.get('password')
+            is_admin = request.form.get('is_admin')
+            bodyweight = request.form.get('bodyweight')
+            bodyfat = request.form.get('bodyfat')
+            user.username = username
+            user.password = password  
+            user.is_admin = is_admin
+            user.bodyweight = bodyweight
+            user.bodyfat = bodyfat
+            db.session.commit()
+
+            return redirect(url_for('user'))
+        return render_template('/admin/user/edit.html', user=user)
+
+    @app.route('/admin/user/delete/<int:id>', methods=['POST'])
+    def delete_user(id):
+        user = User.query.get_or_404(id)
+        db.session.delete(user)
+        db.session.commit()
+        return redirect(url_for('user'))
+
     @app.route("/goals/")
     def goals():
         return render_template("goals.html")
