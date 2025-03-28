@@ -32,7 +32,7 @@
       <td>{{ exercise['id']}}</td>
       <td>{{ exercise['name']}}</td>
       <td>{{ exercise['description']}}</td>
-      <td>{{ exercise['category']}}</td>
+      <td>{{ exercise.category.name }}</td>
       <td class="d-flex justify-content-start">
         <a href="{{ url_for('edit_exercise', id=exercise.id) }}"
           class="btn btn-warning text-white text-decoration-none">

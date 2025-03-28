@@ -14,20 +14,24 @@
 
         <div class="mb-3" id="description">
             <label for="description" class="form-label">Description</label>
-            <input type="text" class="form-control" id="description" name="description" value="{{ exercise.description }}" required>
+            <input type="text" class="form-control" id="description" name="description"
+                value="{{ exercise.description }}" required>
         </div>
 
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
             <select class="form-select" id="category" name="category" required>
-                <option value="{{ exercise.category }}">{{ exercise.category }}</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
+                <option value="{{ exercise.category.id }}" disabled selected>{{ exercise.category.name }}</option>
+                {% for category in categories %}
+                {% if category.id != exercise.category.id %}
+                <option value="{{category['id']}}">{{category['name']}}</option>
+                {% endif %}
+                {% endfor %}
             </select>
         </div>
         <button type="submit" class="btn btn-danger w-100">Edit Exercise</button>
     </form>
+    <a href="{{ url_for('exercise') }}" class="btn btn-secondary w-100 mt-3">Back to Exercises</a>
 </div>
 
 {% endblock %}

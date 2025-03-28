@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for
-from models import db, Exercise
+from models import db, Exercise, Category
 
 def routes(app):
     @app.route("/")
@@ -13,6 +13,7 @@ def routes(app):
 
     @app.route('/admin/exercise/edit/<int:id>/', methods=['GET', 'POST'])
     def edit_exercise(id):
+        categories = Category.query.all()
         exercise = Exercise.query.get_or_404(id)
         if request.method == 'POST':
             exercise.name = request.form['name']
@@ -20,19 +21,20 @@ def routes(app):
             exercise.category = request.form['category']
             db.session.commit()
             return redirect(url_for('exercise'))
-        return render_template('admin/exercise/edit.html', exercise=exercise)
+        return render_template('admin/exercise/edit.html', exercise=exercise, categories=categories)
 
     @app.route('/admin/exercise/add/', methods=['GET', 'POST'])
     def add_exercise():
+        categories = Category.query.all()
         if request.method == 'POST':
             name = request.form['name']
-            category = request.form['category']
+            category_id = request.form['category']
             description = request.form['description']
-            new_exercise = Exercise(name=name, category=category, description=description)
+            new_exercise = Exercise(name=name, description=description, category_id=category_id)
             db.session.add(new_exercise)
             db.session.commit()
             return redirect(url_for('exercise'))
-        return render_template('admin/exercise/add.html')
+        return render_template('admin/exercise/add.html', categories=categories)
 
     @app.route('/admin/exercise/delete/<int:id>/', methods=['POST'])
     def delete_exercise(id):
