@@ -5,7 +5,18 @@ db = SQLAlchemy()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
+    name = db.Column(db.String(80), nullable=False, unique=True)
+    password = db.Column(db.String(80), nullable=False)
+    is_admin = db.Column(db.Integer, nullable=False, default=0)
+    bodyweight = db.Column(db.Integer, nullable=True) 
+    bodyfat = db.Column(db.Integer, nullable=True)
+
+    def __init__(self, name, password, is_admin, bodyweight, bodyfat): # add constructor
+        self.name = name
+        self.password = password
+        self.is_admin = is_admin
+        self.bodyweight = bodyweight
+        self.bodyfat = bodyfat
 
 class Exercise(db.Model):
     id = db.Column(db.Integer, primary_key=True)
