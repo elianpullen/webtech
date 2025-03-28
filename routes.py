@@ -129,10 +129,6 @@ def routes(app):
         db.session.commit()
         return redirect(url_for('category'))
 
-    @app.route("/goals/")
-    def goals():
-        return render_template("goals.html")
-
     @app.route("/about/")
     def about():
         return render_template("about.html")
