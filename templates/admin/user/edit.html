@@ -15,19 +15,27 @@
             <input type="password" class="form-control" id="password" name="password" value="{{ user.password }}" required>
         </div>
 
-        <div class="mb-3" id="is_admin">
+        <div class="mb-3">
             <label for="is_admin" class="form-label">Adminrights</label>
-            <input type="number" class="form-control" id="is_admin" name="is_admin" value="{{ user.is_admin }}" required>
+            <select class="form-select" id="is_admin" name="is_admin" required>
+                {% if user['is_admin'] == True %}
+                <option value=1 selected>Yes</option>
+                <option value=0>No</option>
+                {% else %}
+                <option value=0 selected>No</option>
+                <option value=1>Yes</option>
+                {% endif %}
+            </select>
         </div>
 
         <div class="mb-3" id="bodyweight">
             <label for="bodyweight" class="form-label">Bodyweight</label>
-            <input type="number" class="form-control" id="bodyweight" name="bodyweight" value="{{ user.bodyweight }}">
+            <input type="float" class="form-control" id="bodyweight" name="bodyweight" value="{{ user.bodyweight }}">
         </div>
 
         <div class="mb-3" id="bodyfat">
             <label for="bodyfat" class="form-label">Bodyfat</label>
-            <input type="number" class="form-control" id="bodyfat" name="bodyfat" value="{{ user.bodyfat }}">
+            <input type="float" class="form-control" id="bodyfat" name="bodyfat" value="{{ user.bodyfat }}">
         </div>
 
         <button type="submit" class="btn btn-danger w-100">Edit User</button>
