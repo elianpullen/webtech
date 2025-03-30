@@ -7,11 +7,11 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
-    is_admin = db.Column(db.Integer, nullable=False, default=0)
-    bodyweight = db.Column(db.Integer, nullable=True) 
-    bodyfat = db.Column(db.Integer, nullable=True)
+    is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    bodyweight = db.Column(db.Float, nullable=True) 
+    bodyfat = db.Column(db.Float, nullable=True)
 
-    def __init__(self, name, password, is_admin, bodyweight, bodyfat): # add constructor
+    def __init__(self, name, password, bodyweight, bodyfat, is_admin=False): # add constructor
         self.name = name
         self.password = password
         self.is_admin = is_admin
@@ -21,7 +21,7 @@ class User(db.Model):
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    exercises = db.relationship('Exercise', back_populates='category')  # Relationship to Exercise
+    exercises = db.relationship('Exercise', back_populates='category', lazy=True)  # Relationship to Exercise
 
     def __init__(self, name): # add constructor
         self.name = name
@@ -34,28 +34,29 @@ class Exercise(db.Model):
     
     category = db.relationship('Category', back_populates='exercises')
 
-    def __init__(self, name, description, category_id): # add constructor
+    def __init__(self, name, category_id, description=""): # add constructor
         self.name = name
-        self.description = description
         self.category_id = category_id
+        self.description = description
 
 class Workout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False, unique=True)
+    name = db.Column(db.String(80), nullable=False, unique=False)
     #category
     reps = db.Column(db.Integer, nullable=True)
     weight = db.Column(db.Integer, nullable=True)
-    duration = db.Column(db.Interval, nullable=True)
-    date = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    duration = db.Column(db.Integer, nullable=True)
+    #date = db.Column(db.DateTime, default=datetime.now)  # default to current datetime
     note = db.Column(db.String(255), nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) # Foreign Key to User.id
+    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) # Foreign Key to User.id
 
-    user = db.relationship('User', back_populates='workouts')
+    # user = db.relationship('User', back_populates='workouts')
 
-    def __init__(self, name, reps, weight, duration, note, user_id): # add constructor
+    def __init__(self, name, reps, weight, duration, note): # add constructor
         self.name = name
         self.reps = reps
         self.weight = weight
         self.duration = duration
-        self.date = date
+        #self.date = date
         self.note = note
+        # self.user_id = user_id
