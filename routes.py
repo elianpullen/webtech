@@ -1,10 +1,28 @@
 from flask import render_template, request, redirect, url_for
-from models import db, Exercise, Category, User
+from models import db, Exercise, Category, User, Workout
 
 def routes(app):
     @app.route("/")
     def index():
         return render_template("index.html", name="Henk")
+
+    @app.route('/test')
+    def test():
+        results = db.session.query(User, Workout).join(Workout).all()
+    
+        data = [
+            {
+                "user_id": user.id,
+                "user_name": user.name,
+                "workouts": user.workouts,
+                #"workout_id": workout.id,
+                #"activity": workout.activity,
+                #"duration": workout.duration
+            }
+            for user, workout in results
+        ]
+    
+        return render_template('test.html', data=data)
 
     @app.route('/admin/')
     def admin():

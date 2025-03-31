@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Users and Workouts</title>
+</head>
+<body>
+    <h1>Users and Their Workouts</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Activity</th>
+                <th>Duration (minutes)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+            <tr>
+                <td>{{ item.user_name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -39,8 +39,7 @@ class Exercise(db.Model):
     def __init__(self, name, category_id, description=""): # add constructor
         self.name = name
         self.description = description
-        self.category_id = category_id
-        
+        self.category_id = category_id      
 
 class Workout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,3 +61,23 @@ class Workout(db.Model):
         self.date = date
         self.note = note
         self.user_id = user_id
+
+class Workout_Exercise(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    workout_id = db.Column(db.Integer, db.ForeignKey('workout.id'), nullable=False) # Foreign Key to Workout.id
+    exercise_id = db.Column(db.Integer, db.ForeignKey('exercise.id'), nullable=False) # Foreign Key to Exercise.id
+    sets = db.Column(db.Integer, nullable=True)
+    reps = db.Column(db.Integer, nullable=True)
+    weight = db.Column(db.Integer, nullable=True)
+    duration = db.Column(db.Integer, nullable=True)
+
+    workout = db.relationship('Workout', backref='workout_exercises')
+    exercise = db.relationship('Exercise', backref='workout_exercises')
+
+    def __init__(self, workout_id, exercise_id, sets=0, reps=0, weight=0, duration=0):
+        self.workout_id = workout_id
+        self.exercise_id = exercise_id
+        self.sets = sets
+        self.reps = reps
+        self.weight = weight
+        self.duration = duration

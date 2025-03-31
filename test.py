@@ -23,7 +23,7 @@ with app.app_context():
     db.session.add(exercise2)
 
     # Create Workout
-    workout1 = Workout(name='Full Body Workout', reps=10, weight=50.0, duration=60, note='Good session')
+    workout1 = Workout(name='Full Body Workout', reps=10, weight=50.0, duration=60, date=60, note='Good session', user_id=1)
 
     db.session.add(workout1)
 
