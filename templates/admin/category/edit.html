@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5 p-4 rounded bg-dark text-white">
+    <h1 class="text-danger text-center mb-4">Edit Category</h1>
+    <form action="" method="POST">
+        <div class="mb-3" id="name">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ category.name }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-danger w-100">Edit Category</button>
+    </form>
+    <a href="{{ url_for('category') }}" class="btn btn-secondary w-100 mt-3">Back to Categories</a>
+</div>
+
+{% endblock %}
