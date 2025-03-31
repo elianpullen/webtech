@@ -11,6 +11,8 @@ class User(db.Model):
     bodyweight = db.Column(db.Float, nullable=True) 
     bodyfat = db.Column(db.Float, nullable=True)
 
+    workouts = db.relationship('Workout', back_populates='user', lazy=True)  # Relationship to Workout
+
     def __init__(self, name, password, bodyweight, bodyfat, is_admin=False): # add constructor
         self.name = name
         self.password = password
@@ -36,27 +38,27 @@ class Exercise(db.Model):
 
     def __init__(self, name, category_id, description=""): # add constructor
         self.name = name
-        self.category_id = category_id
         self.description = description
+        self.category_id = category_id
+        
 
 class Workout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False, unique=False)
-    #category
     reps = db.Column(db.Integer, nullable=True)
     weight = db.Column(db.Integer, nullable=True)
     duration = db.Column(db.Integer, nullable=True)
-    #date = db.Column(db.DateTime, default=datetime.now)  # default to current datetime
+    date = db.Column(db.Integer, nullable=True) 
     note = db.Column(db.String(255), nullable=True)
-    # user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) # Foreign Key to User.id
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) # Foreign Key to User.id
 
-    # user = db.relationship('User', back_populates='workouts')
+    user = db.relationship('User', back_populates='workouts')
 
-    def __init__(self, name, reps, weight, duration, note): # add constructor
+    def __init__(self, name, reps, weight, duration, date, note, user_id): # add constructor
         self.name = name
         self.reps = reps
         self.weight = weight
         self.duration = duration
-        #self.date = date
+        self.date = date
         self.note = note
-        # self.user_id = user_id
+        self.user_id = user_id
