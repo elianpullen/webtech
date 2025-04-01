@@ -1,25 +1,24 @@
-from flask import Flask, render_template, request, redirect, url_for    
+import os
+from flask import Flask, render_template, request, redirect, url_for
+from flask_bcrypt import Bcrypt
 from models import db, Exercise
 from routes import routes
-import os
+
 
 app = Flask(__name__)
 
-# Configure the SQLite database
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))  # Get the base directory
-instance_dir = os.path.join(BASE_DIR, 'instance')
-if not os.path.exists(instance_dir):
-    os.makedirs(instance_dir)
+bcrypt = Bcrypt(app)
 
-# Configure the database URI
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(instance_dir, 'database.db')}"
+# Configure app settings
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'mijngeheimesleutel')  # Use environment variable for SECRET_KEY
+basedir = os.path.abspath(os.path.dirname(__file__))  # Get base directory
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.sqlite')  # Set path to database
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-db.init_app(app)  # Initialize db with app
+db.init_app(app) # Initialize database
 
 routes(app) # import routes
 
-# Create tables if necessary
 with app.app_context():
     db.create_all()
 
