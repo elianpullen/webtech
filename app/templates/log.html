@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container mt-5 p-4 rounded bg-dark text-white">
     <h1 class="text-danger text-center mb-4">Log Your Workout</h1>
-    <form action="{{ url_for('log') }}" method="POST" class="needs-validation" novalidate>
+    <form action="{{ url_for('main.log') }}" method="POST" class="needs-validation" novalidate>
         <div class="mb-3">
             <label for="workoutType" class="form-label">Workout Type</label>
             <select class="form-select" id="workoutType" name="workout_type" required>

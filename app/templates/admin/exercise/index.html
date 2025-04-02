@@ -12,7 +12,7 @@
         <!-- Text inside the table header row -->
         <div class="d-flex justify-content-between align-items-center">
           <p class="text-white mb-0">Exercises List</p>
-          <a href="{{ url_for('add_exercise') }}" class="btn btn-success text-white text-decoration-none">
+          <a href="{{ url_for('main.add_exercise') }}" class="btn btn-success text-white text-decoration-none">
             +
           </a>
         </div>
@@ -34,12 +34,12 @@
       <td>{{ exercise['description']}}</td>
       <td>{{ exercise.category.name }}</td>
       <td class="d-flex justify-content-start">
-        <a href="{{ url_for('edit_exercise', id=exercise.id) }}"
+        <a href="{{ url_for('main.edit_exercise', id=exercise.id) }}"
           class="btn btn-warning text-white text-decoration-none">
           Edit
         </a>
 
-        <form action="{{ url_for('delete_exercise', id=exercise.id) }}" method="POST">
+        <form action="{{ url_for('main.delete_exercise', id=exercise.id) }}" method="POST">
           <button type="submit" class="btn btn-danger">Delete</button>
         </form>
       </td>

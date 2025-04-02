@@ -11,7 +11,7 @@
 <body class="bg-secondary text-white">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.index') }}">
                 <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="me-2" style="height: 60px;">
                 My Exercise Tracker
             </a>
@@ -21,10 +21,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('index') }}">Home</a>
+                        <a class="nav-link active" href="{{ url_for('main.index') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                        <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
                     </li>
                 </ul>
             </div>
@@ -39,7 +39,7 @@
         <div class="container text-center">
             <p class="mb-0">&copy; 2025 My Exercise Tracker. All rights reserved.</p>
             <p class="mb-0">
-                <a href="{{ url_for('about') }}" class="text-white text-decoration-none">About</a> 
+                <a href="{{ url_for('main.about') }}" class="text-white text-decoration-none">About</a> 
                 
             </p>
         </div>

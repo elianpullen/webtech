@@ -7,7 +7,7 @@
     <h1 class="text-danger text-center mb-4">Track Your Progress</h1>
 
     <!-- Form to input weight and body fat -->
-    <form action="{{ url_for('progress') }}" method="POST" class="needs-validation" novalidate>
+    <form action="{{ url_for('main.progress') }}" method="POST" class="needs-validation" novalidate>
         <div class="mb-3">
             <label for="body_weight" class="form-label">Weight (in kg)</label>
             <input type="number" class="form-control" id="body_weight" name="body_weight" min="1" required>
