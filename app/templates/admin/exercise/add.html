@@ -1,9 +1,5 @@
 {% extends "base.html" %}
-
-{% block title %}Exercises Overview{% endblock %}
-
 {% block content %}
-
 <div class="container mt-5 p-4 rounded bg-dark text-white">
     <h1 class="text-danger text-center mb-4">Add New Exercise</h1>
     <form action="{{ url_for('main.add_exercise') }}" method="POST">
@@ -30,5 +26,4 @@
     </form>
     <a href="{{ url_for('main.exercise') }}" class="btn btn-secondary w-100 mt-3">Back to Exercises</a>
 </div>
-
 {% endblock %}

@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-
 {% block content %}
-
 <div class="container mt-5 p-4 rounded bg-dark text-white">
     <h1 class="text-danger text-center mb-4">Add New User</h1>
     <form action="{{ url_for('main.add_user') }}" method="POST">
@@ -33,5 +31,4 @@
     </form>
     <a href="{{ url_for('main.user') }}" class="btn btn-secondary w-100 mt-3">Back to Users</a>
 </div>
-
 {% endblock %}
