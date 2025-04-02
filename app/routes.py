@@ -1,7 +1,58 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from .models import db, Exercise, Category, User, Workout
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+# from .models import db, Exercise, Category, User, Workout
+from .models import db, Exercise, Category, User
+from .forms import LoginForm, RegistrationForm
+from werkzeug.security import generate_password_hash
+from flask_login import login_user, login_required, logout_user
 
 main = Blueprint('main', __name__)
+
+@main.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        
+        # Check user exists and password is correct
+        if user and user.verify_password(form.password.data):
+            login_user(user)
+            flash('Logged in successfully!', 'success')
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('main.index'))
+        
+        flash('Invalid username or password', 'danger')
+    
+    return render_template('login.html', form=form)
+
+@main.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        # Check if user already exists
+        if User.query.filter_by(username=form.username.data).first():
+            flash('Username already taken!', 'error')
+            return redirect(url_for('main.register'))
+
+        # Create new user - let the User class handle password hashing
+        user = User(
+            username=form.username.data,
+            password=form.password.data  # Pass plaintext password
+        )
+
+        db.session.add(user)
+        db.session.commit()
+        flash('Registration successful! Please login.', 'success')
+        return redirect(url_for('main.login'))
+
+    return render_template('register.html', form=form)
+
+@main.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Je bent nu uitgelogd!')
+    return redirect(url_for('main.index'))
 
 @main.route('/')
 def index():
