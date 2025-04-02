@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-# from .models import db, Exercise, Category, User, Workout
-from .models import db, Exercise, Category, User
+from .models import db, Exercise, Category, User, Workout, Workout_Exercise
 from .forms import LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
@@ -8,23 +7,27 @@ from .utils import admin_required
 
 main = Blueprint('main', __name__)
 
-@main.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        
-        # Check user exists and password is correct
-        if user and user.verify_password(form.password.data):
-            login_user(user)
-            flash('Logged in successfully!', 'success')
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('main.index'))
-        
-        flash('Invalid username or password', 'danger')
-    
-    return render_template('login.html', form=form)
+@main.route('/test')
+def test():
+    results = db.session.query(User, Workout).join(Workout).all()
+
+    data = [
+        {
+            "user_id": user.id,
+            "user_name": user.name,
+            "workouts": user.workouts,
+            #"workout_id": workout.id,
+            #"activity": workout.activity,
+            #"duration": workout.duration
+        }
+        for user, workout in results
+    ]
+
+    return render_template('test.html', data=data)
+
+@main.route('/')
+def index():
+    return render_template('index.html')
 
 @main.route('/register', methods=['GET', 'POST'])
 def register():
@@ -48,33 +51,30 @@ def register():
 
     return render_template('register.html', form=form)
 
+@main.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        
+        # Check user exists and password is correct
+        if user and user.verify_password(form.password.data):
+            login_user(user)
+            flash('Logged in successfully!', 'success')
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('main.index'))
+        
+        flash('Invalid username or password', 'danger')
+    
+    return render_template('login.html', form=form)
+
 @main.route('/logout')
 @login_required
 def logout():
     logout_user()
     flash('Je bent nu uitgelogd!')
     return redirect(url_for('main.index'))
-
-@main.route('/')
-def index():
-    return render_template('index.html', name="Henk")
-
-
-    results = db.session.query(User, Workout).join(Workout).all()
-
-    data = [
-        {
-            "user_id": user.id,
-            "user_name": user.name,
-            "workouts": user.workouts,
-            #"workout_id": workout.id,
-            #"activity": workout.activity,
-            #"duration": workout.duration
-        }
-        for user, workout in results
-    ]
-
-    return render_template('test.html', data=data)
 
 @main.route('/admin/')
 @login_required
@@ -88,20 +88,6 @@ def admin():
 def exercise():
     exercises = Exercise.query.all()
     return render_template('admin/exercise/index.html', exercises=exercises)
-
-@main.route('/admin/exercise/edit/<int:id>/', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def edit_exercise(id):
-    categories = Category.query.all()
-    exercise = Exercise.query.get_or_404(id)
-    if request.method == 'POST':
-        exercise.name = request.form.get('name')
-        exercise.description = request.form.get('description')
-        exercise.category_id = request.form.get('category_id')
-        db.session.commit()
-        return redirect(url_for('main.exercise'))
-    return render_template('admin/exercise/edit.html', exercise=exercise, categories=categories)
 
 @main.route('/admin/exercise/add/', methods=['GET', 'POST'])
 @login_required
@@ -117,6 +103,20 @@ def add_exercise():
         db.session.commit()
         return redirect(url_for('main.exercise'))
     return render_template('admin/exercise/add.html', categories=categories)
+
+@main.route('/admin/exercise/edit/<int:id>/', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_exercise(id):
+    categories = Category.query.all()
+    exercise = Exercise.query.get_or_404(id)
+    if request.method == 'POST':
+        exercise.name = request.form.get('name')
+        exercise.description = request.form.get('description')
+        exercise.category_id = request.form.get('category_id')
+        db.session.commit()
+        return redirect(url_for('main.exercise'))
+    return render_template('admin/exercise/edit.html', exercise=exercise, categories=categories)
 
 @main.route('/admin/exercise/delete/<int:id>/', methods=['POST'])
 @login_required
@@ -167,6 +167,22 @@ def edit_user(id):
         return redirect(url_for('main.user'))
     return render_template('/admin/user/edit.html', user=user)
 
+@main.route('/admin/user/edit/<int:id>/', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_user_password(id):
+    user = User.query.get_or_404(id)
+    if request.method == 'POST':
+        new_password = request.form.get('password')
+            
+        # Hash the new password before storing
+        user.password = generate_password_hash(new_password)
+        db.session.commit()
+        flash('Password updated successfully!', 'success')
+        return redirect(url_for('main.user_profile', id=id))
+        
+    return render_template('/admin/user/edit_password.html', user=user)
+
 @main.route('/admin/user/delete/<int:id>', methods=['POST'])
 @login_required
 @admin_required
@@ -197,21 +213,16 @@ def add_category():
         return redirect(url_for('main.category'))
     return render_template('/admin/category/add.html')
 
-@main.route('/admin/user/edit/<int:id>/', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def edit_user_password(id):
-    user = User.query.get_or_404(id)
+@main.route('/admin/category/edit/<int:id>/', methods=['GET', 'POST'])
+def edit_category(id):
+    category = Category.query.get_or_404(id)
     if request.method == 'POST':
-        new_password = request.form.get('password')
-            
-        # Hash the new password before storing
-        user.password = generate_password_hash(new_password)
+        name = request.form.get('name')
+        category.name = name
         db.session.commit()
-        flash('Password updated successfully!', 'success')
-        return redirect(url_for('main.user_profile', id=id))
-        
-    return render_template('/admin/user/edit_password.html', user=user)
+
+        return redirect(url_for('main.category'))
+    return render_template('/admin/category/edit.html', category=category)
 
 @main.route('/admin/category/delete/<int:id>', methods=['POST'])
 @login_required
