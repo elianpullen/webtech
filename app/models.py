@@ -8,7 +8,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False, unique=True)
     password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Integer, nullable=False, default=0)
+    is_admin = db.Column(db.Boolean, default=False)
     bodyweight = db.Column(db.Float, nullable=True) 
     bodyfat = db.Column(db.Float, nullable=True)
 

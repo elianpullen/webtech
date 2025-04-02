@@ -3,7 +3,8 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from .models import db, Exercise, Category, User
 from .forms import LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
+from .utils import admin_required
 
 main = Blueprint('main', __name__)
 
@@ -76,15 +77,21 @@ def index():
     return render_template('test.html', data=data)
 
 @main.route('/admin/')
+@login_required
+@admin_required
 def admin():
     return render_template('admin/index.html')
 
 @main.route('/admin/exercise/')
+@login_required
+@admin_required
 def exercise():
     exercises = Exercise.query.all()
     return render_template('admin/exercise/index.html', exercises=exercises)
 
 @main.route('/admin/exercise/edit/<int:id>/', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def edit_exercise(id):
     categories = Category.query.all()
     exercise = Exercise.query.get_or_404(id)
@@ -97,6 +104,8 @@ def edit_exercise(id):
     return render_template('admin/exercise/edit.html', exercise=exercise, categories=categories)
 
 @main.route('/admin/exercise/add/', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def add_exercise():
     categories = Category.query.all()
     if request.method == 'POST':
@@ -110,6 +119,8 @@ def add_exercise():
     return render_template('admin/exercise/add.html', categories=categories)
 
 @main.route('/admin/exercise/delete/<int:id>/', methods=['POST'])
+@login_required
+@admin_required
 def delete_exercise(id):
     exercise = Exercise.query.get_or_404(id)
     db.session.delete(exercise)
@@ -117,20 +128,24 @@ def delete_exercise(id):
     return redirect(url_for('main.exercise'))
 
 @main.route('/admin/user/')
+@login_required
+@admin_required
 def user():
     users = User.query.all()
     return render_template("admin/user/index.html/", users=users)
 
 @main.route('/admin/user/add/', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def add_user():
     if request.method == 'POST':
-        name = request.form.get('name')
+        username = request.form.get('username')
         password = request.form.get('password')
-        is_admin = request.form.get('is_admin')
-        bodyweight = request.form.get('bodyweight')
-        bodyfat = request.form.get('bodyfat')
+        is_admin = request.form.get('is_admin') == 'on'
+        bodyweight = request.form.get('bodyweight') or None
+        bodyfat = request.form.get('bodyfat') or None
             
-        new_user = User(name=name, password=password, is_admin=is_admin, bodyweight=bodyweight, bodyfat=bodyfat)
+        new_user = User(username=username, password=password, is_admin=is_admin, bodyweight=bodyweight, bodyfat=bodyfat)
         db.session.add(new_user)
         db.session.commit()
         
@@ -138,19 +153,23 @@ def add_user():
     return render_template('/admin/user/add.html')
 
 @main.route('/admin/user/edit/<int:id>/', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def edit_user(id):
     user = User.query.get_or_404(id)
     if request.method == 'POST':
         user.name = request.form.get('name')
         user.password = request.form.get('password')
-        user.is_admin = request.form.get('is_admin')
-        user.bodyweight = request.form.get('bodyweight')
-        user.bodyfat = request.form.get('bodyfat')
+        user.is_admin = request.form.get('is_admin') == 'on'
+        user.bodyweight = request.form.get('bodyweight') or None
+        user.bodyfat = request.form.get('bodyfat') or None
         db.session.commit()
         return redirect(url_for('main.user'))
     return render_template('/admin/user/edit.html', user=user)
 
 @main.route('/admin/user/delete/<int:id>', methods=['POST'])
+@login_required
+@admin_required
 def delete_user(id):
     user = User.query.get_or_404(id)
     db.session.delete(user)
@@ -158,11 +177,15 @@ def delete_user(id):
     return redirect(url_for('main.user'))
 
 @main.route('/admin/category/')
+@login_required
+@admin_required
 def category():
     categories = Category.query.all()
     return render_template("admin/category/index.html/", categories=categories)  
 
 @main.route('/admin/category/add/', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def add_category():
     if request.method == 'POST':
         name = request.form.get('name')
@@ -174,17 +197,25 @@ def add_category():
         return redirect(url_for('main.category'))
     return render_template('/admin/category/add.html')
 
-@main.route('/admin/category/edit/<int:id>/', methods=['GET', 'POST'])
-def edit_category(id):
-    category = Category.query.get_or_404(id)
+@main.route('/admin/user/edit/<int:id>/', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_user_password(id):
+    user = User.query.get_or_404(id)
     if request.method == 'POST':
-        name = request.form.get('name')
-        category.name = name
+        new_password = request.form.get('password')
+            
+        # Hash the new password before storing
+        user.password = generate_password_hash(new_password)
         db.session.commit()
-        return redirect(url_for('main.category'))
-    return render_template('/admin/category/edit.html', category=category)
+        flash('Password updated successfully!', 'success')
+        return redirect(url_for('main.user_profile', id=id))
+        
+    return render_template('/admin/user/edit_password.html', user=user)
 
 @main.route('/admin/category/delete/<int:id>', methods=['POST'])
+@login_required
+@admin_required
 def delete_category(id):
     category = Category.query.get_or_404(id)
     db.session.delete(category)
@@ -196,6 +227,7 @@ def about():
     return render_template("about.html")
 
 @main.route('/log/', methods=['GET', 'POST'])
+@login_required
 def log():
     if request.method == 'POST':
         workout_type = request.form['workout_type']
@@ -213,6 +245,7 @@ def log():
     return render_template('log.html')
     
 @main.route('/progress/', methods=['GET', 'POST'])
+@login_required
 def progress():
     # Example: Replace with actual database logic
     completed_workouts = 15  # Replace with a query to count completed workouts

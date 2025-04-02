@@ -16,20 +16,32 @@
     </tr>
     <tr>
       <th scope="col">Name</th>
-      <th scope="col">Password</th>
       <th scope="col">Adminrights</th>
+      <th scope="col">Bodyweight</th>
+      <th scope="col">Bodyfat</th>
       <th scope="col">Actions</th>
     </tr>
   </thead>
   <tbody>
     {% for user in users %}
     <tr>
-      <td>{{ user['name'] }}</td>
-      <td>{{ user['password'] }}</td>
+      <td>{{ user['username'] }}</td>
       {% if user['is_admin'] == True %}
       <td>Yes</td>
       {% else %}
       <td>No</td>
+      {% endif %}
+
+      {% if user['bodyweight'] == None %}
+      <td></td>
+      {% else %}
+      <td>{{ user['bodyweight'] }}</td>
+      {% endif %}
+      
+      {% if user['bodyfat'] == None %}
+      <td></td>
+      {% else %}
+      <td>{{ user['bodyfat'] }}</td>
       {% endif %}
 
       <td class="d-flex justify-content-start gap-2">

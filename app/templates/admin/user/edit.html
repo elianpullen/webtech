@@ -7,7 +7,7 @@
     <form action="" method="POST">
         <div class="mb-3" id="name">
             <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+            <input type="text" class="form-control" id="name" name="name" value="{{ user.username }}" required>
         </div>
 
         <div class="mb-3" id="password">
@@ -17,25 +17,29 @@
 
         <div class="mb-3">
             <label for="is_admin" class="form-label">Adminrights</label>
-            <select class="form-select" id="is_admin" name="is_admin" required>
-                {% if user['is_admin'] == True %}
-                <option value=1 selected>Yes</option>
-                <option value=0>No</option>
-                {% else %}
-                <option value=0 selected>No</option>
-                <option value=1>Yes</option>
-                {% endif %}
-            </select>
+            {% if user['is_admin'] == True %}
+            <input type="checkbox" name="is_admin" id="is_admin" checked>
+            {% else %}
+            <input type="checkbox" name="is_admin" id="is_admin">
+            {% endif %}
         </div>
 
         <div class="mb-3" id="bodyweight">
             <label for="bodyweight" class="form-label">Bodyweight</label>
+            {% if user['bodyweight'] == None %}
+            <input type="float" class="form-control" id="bodyweight" name="bodyweight">
+            {% else %}
             <input type="float" class="form-control" id="bodyweight" name="bodyweight" value="{{ user.bodyweight }}">
+            {% endif %}
         </div>
 
         <div class="mb-3" id="bodyfat">
             <label for="bodyfat" class="form-label">Bodyfat</label>
+            {% if user['bodyfat'] == None %}
+            <input type="float" class="form-control" id="bodyfat" name="bodyfat">
+            {% else %}
             <input type="float" class="form-control" id="bodyfat" name="bodyfat" value="{{ user.bodyfat }}">
+            {% endif %}
         </div>
 
         <button type="submit" class="btn btn-danger w-100">Edit User</button>

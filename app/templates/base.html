@@ -30,6 +30,9 @@
                     </li>
                     {% if current_user.is_authenticated %}
                     <li class="nav-link"><a href="{{ url_for('main.logout') }}">Uitloggen</a></li>
+                    {% if current_user.is_admin %}
+                    <li class="nav-link"><a href="{{ url_for('main.admin') }}">Admin</a></li>
+                    {% endif %}
                     {% else %}
                     <li class="nav-link"><a href="{{ url_for('main.login') }}">Inloggen</a></li>
                     <li class="nav-link"><a href="{{ url_for('main.register') }}">Registreren</a></li>
