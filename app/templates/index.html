@@ -1,42 +1,45 @@
 {% extends "base.html" %}
-{% block title %}Exercise Tracker{% endblock %}
 {% block content %}
-    <div class="bg-dark text-white min-vh-100 rounded">
-        <div class="container mt-5 p-4 rounded">
-            <h1 class="text-danger">Welcome to Your Exercise Tracker, {{ name }}!</h1>
-            <p>Track your workouts, set goals, and monitor your progress.</p>
-            
-            <div class="row mt-4">
-                <div class="col-md-4 d-flex mb-4">
-                    <div class="card bg-secondary text-white border-0 flex-fill">
-                        <div class="card-body">
-                            <h4 class="card-title text-body">Log a Workout</h4>
-                            <p class="card-text">Record your exercises and track your performance.</p>
-                            <a href="{{ url_for('main.workouts') }}" class="btn btn-danger">Log Workout</a>
-                        </div>
-                    </div>
-                </div>
+<div class="bg-dark text-white min-vh-100 rounded">
+    <div class="container mt-5 p-4 rounded">
+        {% if current_user.is_authenticated %}
+        <h1 class="text-danger">Welcome to Your Exercise Tracker, {{ current_user.username }}!</h1>
+        {% else %}
+        <h1 class="text-danger">Welcome to Your Exercise Tracker!</h1>
+        {% endif %}
+        <p>Track your workouts, set goals, and monitor your progress.</p>
 
-                <div class="col-md-4 d-flex mb-4">
-                    <div class="card bg-secondary text-white border-0 flex-fill">
-                        <div class="card-body">
-                            <h4 class="card-title text-body">View Progress</h4>
-                            <p class="card-text">Check your workout history and see your improvements over time.</p>
-                            <a href="/progress" class="btn btn-danger">View Progress</a>
-                        </div>
+        <div class="row mt-4">
+            <div class="col-md-4 d-flex mb-4">
+                <div class="card bg-secondary text-white border-0 flex-fill">
+                    <div class="card-body">
+                        <h4 class="card-title text-body">Log a Workout</h4>
+                        <p class="card-text">Record your exercises and track your performance.</p>
+                        <a href="{{ url_for('main.workouts') }}" class="btn btn-danger">Log Workout</a>
                     </div>
                 </div>
-                
-                <div class="col-md-4 d-flex mb-4">
-                    <div class="card bg-secondary text-white border-0 flex-fill">
-                        <div class="card-body">
-                            <h4 class="card-title text-body">...</h4>
-                            <p class="card-text">....</p>
-                            <a href="" class="btn btn-danger">...</a>
-                        </div>
+            </div>
+
+            <div class="col-md-4 d-flex mb-4">
+                <div class="card bg-secondary text-white border-0 flex-fill">
+                    <div class="card-body">
+                        <h4 class="card-title text-body">View Progress</h4>
+                        <p class="card-text">Check your workout history and see your improvements over time.</p>
+                        <a href="/progress" class="btn btn-danger">View Progress</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 d-flex mb-4">
+                <div class="card bg-secondary text-white border-0 flex-fill">
+                    <div class="card-body">
+                        <h4 class="card-title text-body">...</h4>
+                        <p class="card-text">....</p>
+                        <a href="" class="btn btn-danger">...</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
