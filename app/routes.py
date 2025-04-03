@@ -270,3 +270,125 @@ def progress():
         # Redirect to avoid form resubmission
         return redirect(url_for('main.progress'))
     return render_template('progress.html', completed_workouts=completed_workouts, body_weight=body_weight, body_fat=body_fat)
+
+@main.route('/workout/add/', methods=['GET', 'POST'])
+@login_required
+def add_workout():
+    exercises = Exercise.query.all()
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        date = request.form.get('date')
+        note = request.form.get('note')
+        
+        # Create the workout
+        new_workout = Workout(
+            name=name,
+            reps=0,  # Default values, will be overridden by exercise-specific values
+            weight=0,
+            duration=0,
+            date=date,
+            note=note,
+            user_id=current_user.id
+        )
+        db.session.add(new_workout)
+        db.session.flush()  # Get the workout ID
+        
+        # Process selected exercises
+        for key, value in request.form.items():
+            if key.startswith('exercise_'):
+                exercise_id = int(key.split('_')[1])
+                if value == 'on':  # Checkbox is checked
+                    sets = request.form.get(f'sets_{exercise_id}') or 0
+                    reps = request.form.get(f'reps_{exercise_id}') or 0
+                    weight = request.form.get(f'weight_{exercise_id}') or 0
+                    duration = request.form.get(f'duration_{exercise_id}') or 0
+                    
+                    workout_exercise = Workout_Exercise(
+                        workout_id=new_workout.id,
+                        exercise_id=exercise_id,
+                        sets=sets,
+                        reps=reps,
+                        weight=weight,
+                        duration=duration
+                    )
+                    db.session.add(workout_exercise)
+        
+        db.session.commit()
+        flash('Workout created successfully!', 'success')
+        return redirect(url_for('main.workouts'))
+    
+    return render_template('workout/add.html', exercises=exercises)
+
+@main.route('/workout/')
+@login_required
+def workouts():
+    workouts = Workout.query.filter_by(user_id=current_user.id).all()
+    return render_template('workout/index.html', workouts=workouts)
+
+@main.route('/workout/delete/<int:id>/', methods=['POST'])
+@login_required
+def delete_workout(id):
+    workout = Workout.query.get_or_404(id)
+    
+    # Check if the workout belongs to the current user
+    if workout.user_id != current_user.id and not current_user.is_admin:
+        flash('You do not have permission to delete this workout', 'danger')
+        return redirect(url_for('main.workouts'))
+    
+    # Delete associated workout exercises first
+    Workout_Exercise.query.filter_by(workout_id=id).delete()
+    
+    # Then delete the workout
+    db.session.delete(workout)
+    db.session.commit()
+    
+    flash('Workout deleted successfully', 'success')
+    return redirect(url_for('main.workouts'))
+
+@main.route('/workout/edit/<int:id>/', methods=['GET', 'POST'])
+@login_required
+def edit_workout(id):
+    workout = Workout.query.get_or_404(id)
+    
+    # Check if the workout belongs to the current user
+    if workout.user_id != current_user.id and not current_user.is_admin:
+        flash('You do not have permission to edit this workout', 'danger')
+        return redirect(url_for('main.workouts'))
+    
+    exercises = Exercise.query.all()
+    workout_exercises = {we.exercise_id: we for we in workout.workout_exercises}
+    
+    if request.method == 'POST':
+        workout.name = request.form.get('name')
+        workout.date = request.form.get('date')
+        workout.note = request.form.get('note')
+        
+        # Delete existing workout exercises
+        Workout_Exercise.query.filter_by(workout_id=id).delete()
+        
+        # Process selected exercises
+        for key, value in request.form.items():
+            if key.startswith('exercise_'):
+                exercise_id = int(key.split('_')[1])
+                if value == 'on':  # Checkbox is checked
+                    sets = request.form.get(f'sets_{exercise_id}') or 0
+                    reps = request.form.get(f'reps_{exercise_id}') or 0
+                    weight = request.form.get(f'weight_{exercise_id}') or 0
+                    duration = request.form.get(f'duration_{exercise_id}') or 0
+                    
+                    workout_exercise = Workout_Exercise(
+                        workout_id=workout.id,
+                        exercise_id=exercise_id,
+                        sets=sets,
+                        reps=reps,
+                        weight=weight,
+                        duration=duration
+                    )
+                    db.session.add(workout_exercise)
+        
+        db.session.commit()
+        flash('Workout updated successfully!', 'success')
+        return redirect(url_for('main.workouts'))
+    
+    return render_template('workout/edit.html', workout=workout, exercises=exercises, workout_exercises=workout_exercises)
