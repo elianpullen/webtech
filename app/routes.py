@@ -8,22 +8,9 @@ from .utils import admin_required
 main = Blueprint('main', __name__)
 
 @main.route('/test')
-def test():
-    results = db.session.query(User, Workout).join(Workout).all()
-
-    data = [
-        {
-            "user_id": user.id,
-            "user_name": user.name,
-            "workouts": user.workouts,
-            #"workout_id": workout.id,
-            #"activity": workout.activity,
-            #"duration": workout.duration
-        }
-        for user, workout in results
-    ]
-
-    return render_template('test.html', data=data)
+def home():
+    flash("This is a flash message!", "success")  # ("message", "category")
+    return render_template('index.html')
 
 @main.route('/')
 def index():
