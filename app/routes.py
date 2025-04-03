@@ -20,12 +20,10 @@ def index():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        # Check if user already exists
-        if User.query.filter_by(username=form.username.data).first():
+        if User.query.filter_by(username=form.username.data).first():# Check if user already exists
             flash('Username already taken!', 'error')
             return redirect(url_for('main.register'))
 
-        # Create new user - let the User class handle password hashing
         user = User(
             username=form.username.data,
             password=form.password.data  # Pass plaintext password
@@ -258,6 +256,12 @@ def progress():
         return redirect(url_for('main.progress'))
     return render_template('progress.html', completed_workouts=completed_workouts, body_weight=body_weight, body_fat=body_fat)
 
+@main.route('/workout/')
+@login_required
+def workouts():
+    workouts = Workout.query.filter_by(user_id=current_user.id).all()
+    return render_template('workout/index.html', workouts=workouts)
+
 @main.route('/workout/add/', methods=['GET', 'POST'])
 @login_required
 def add_workout():
@@ -271,7 +275,7 @@ def add_workout():
         # Create the workout
         new_workout = Workout(
             name=name,
-            reps=0,  # Default values, will be overridden by exercise-specific values
+            reps=0,  # Default values
             weight=0,
             duration=0,
             date=date,
@@ -279,7 +283,7 @@ def add_workout():
             user_id=current_user.id
         )
         db.session.add(new_workout)
-        db.session.flush()  # Get the workout ID
+        db.session.flush()
         
         # Process selected exercises
         for key, value in request.form.items():
@@ -306,12 +310,6 @@ def add_workout():
         return redirect(url_for('main.workouts'))
     
     return render_template('workout/add.html', exercises=exercises)
-
-@main.route('/workout/')
-@login_required
-def workouts():
-    workouts = Workout.query.filter_by(user_id=current_user.id).all()
-    return render_template('workout/index.html', workouts=workouts)
 
 @main.route('/workout/delete/<int:id>/', methods=['POST'])
 @login_required
