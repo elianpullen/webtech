@@ -144,6 +144,8 @@ def edit_user(id):
     user = User.query.get_or_404(id)
     if request.method == 'POST':
         user.name = request.form.get('name')
+        new_password = request.form.get('password')
+        user.password = generate_password_hash(new_password)
         user.password = request.form.get('password')
         user.is_admin = request.form.get('is_admin') == 'on'
         user.bodyweight = request.form.get('bodyweight') or None
@@ -151,22 +153,6 @@ def edit_user(id):
         db.session.commit()
         return redirect(url_for('main.user'))
     return render_template('/admin/user/edit.html', user=user)
-
-@main.route('/admin/user/edit/<int:id>/', methods=['GET', 'POST'])
-@login_required
-@admin_required
-def edit_user_password(id):
-    user = User.query.get_or_404(id)
-    if request.method == 'POST':
-        new_password = request.form.get('password')
-            
-        # Hash the new password before storing
-        user.password = generate_password_hash(new_password)
-        db.session.commit()
-        flash('Password updated successfully!', 'success')
-        return redirect(url_for('main.user_profile', id=id))
-        
-    return render_template('/admin/user/edit_password.html', user=user)
 
 @main.route('/admin/user/delete/<int:id>', methods=['POST'])
 @login_required
