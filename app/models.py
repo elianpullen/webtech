@@ -2,8 +2,9 @@ from . import db
 from sqlalchemy.sql import func
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from .password_utils import PasswordMixin
 
-class User(db.Model, UserMixin):
+class User(db.Model, UserMixin, PasswordMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False, unique=True)
@@ -21,16 +22,16 @@ class User(db.Model, UserMixin):
         self.bodyweight = bodyweight
         self.bodyfat = bodyfat
 
-    @property
-    def password(self):
-        raise AttributeError('password is not readable')
+    # @property
+    # def password(self):
+    #     raise AttributeError('password is not readable')
     
-    @password.setter
-    def password(self, password):
-        self.password_hash = generate_password_hash(password)
+    # @password.setter
+    # def password(self, password):
+    #     self.password_hash = generate_password_hash(password)
     
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
+    # def verify_password(self, password):
+    #     return check_password_hash(self.password_hash, password)
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
