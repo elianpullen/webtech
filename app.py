@@ -23,11 +23,10 @@ class DatabaseInitializer:
             
             if not admin:
                 password = getpass.getpass("Voer een wachtwoord in voor het admin-account: ")
-                hashed_password = generate_password_hash(password)
 
                 default_admin = User(
                     username='admin',
-                    password=hashed_password,
+                    password=password,
                     is_admin=1,
                 )
 
