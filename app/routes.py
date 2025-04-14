@@ -207,23 +207,6 @@ def delete_category(id):
 @main.route("/about/")
 def about():
     return render_template("about.html")
-
-@main.route('/log/', methods=['GET', 'POST'])
-@login_required
-def log():
-    if request.method == 'POST':
-        workout_type = request.form['workout_type']
-        exercise = request.form.get('exercise', '')
-        duration = request.form['duration']
-        date = request.form['date']
-        notes = request.form.get('notes', '')
-        # Handle strength-specific fields
-        reps = request.form.get('reps', None)
-        weight = request.form.get('weight', None)
-        # Process the data (e.g., save to a database)
-        print(f"Workout logged: {workout_type}, {exercise}, {duration} minutes, {date}, Reps: {reps}, Weight: {weight}, Notes: {notes}")
-        return redirect(url_for('main.index'))
-    return render_template('log.html')
     
 @main.route('/workout/')
 @login_required
