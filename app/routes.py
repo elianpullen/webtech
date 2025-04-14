@@ -7,11 +7,6 @@ from .utils import admin_required
 
 main = Blueprint('main', __name__)
 
-@main.route('/test')
-def home():
-    flash("This is a flash message!", "success")  # ("message", "category")
-    return render_template('index.html')
-
 @main.route('/')
 def index():
     return render_template('index.html')
