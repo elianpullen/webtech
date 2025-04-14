@@ -14,11 +14,15 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     login_manager.login_view = "main.login"
 
+    # Import and register blueprints
+    from .admin import admin
     from .models import User
 
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
+
+    app.register_blueprint(admin, url_prefix='/admin')  # Admin routes
 
     from .routes import main
     app.register_blueprint(main)
