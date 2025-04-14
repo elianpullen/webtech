@@ -42,7 +42,9 @@ class DatabaseInitializer:
         self.create_tables()
         self.create_admin()
 
-# Run the script
-if __name__ == "__main__":
-    initializer = DatabaseInitializer()
+if __name__ == "__main__": # Only run this if this file is being run directly
+    initializer = DatabaseInitializer()# Initialize database first
     initializer.initialize_database()
+    
+    app = create_app() # start flask app
+    app.run(debug=True)
