@@ -78,7 +78,7 @@ def add_exercise():
     if request.method == 'POST':
         name = request.form['name']
         category_id = request.form['category']
-        description = request.form['description']
+        description = request.form['description'] or ""
         new_exercise = Exercise(name=name, description=description, category_id=category_id)
         db.session.add(new_exercise)
         db.session.commit()
@@ -93,7 +93,7 @@ def edit_exercise(id):
     exercise = Exercise.query.get_or_404(id)
     if request.method == 'POST':
         exercise.name = request.form.get('name')
-        exercise.description = request.form.get('description')
+        exercise.description = request.form.get('description') or ""
         exercise.category_id = request.form.get('category_id')
         db.session.commit()
         return redirect(url_for('admin.exercise'))
