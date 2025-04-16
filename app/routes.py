@@ -61,7 +61,7 @@ def about():
     
 @main.route('/workout/')
 @login_required
-def workouts():
+def workout():
     workouts = Workout.query.filter_by(user_id=current_user.id).all()
     return render_template('workout/index.html', workouts=workouts)
 
@@ -128,10 +128,9 @@ def add_workout():
 
         db.session.commit()
         flash('Workout created successfully!', 'success')
-        return redirect(url_for('main.workouts'))
+        return redirect(url_for('main.workout'))
 
     return render_template('workout/add.html', exercises=exercises)
-
 
 @main.route('/workout/edit/<int:id>/', methods=['GET', 'POST'])
 @login_required
@@ -140,7 +139,7 @@ def edit_workout(id):
     
     # Check if the user is the owner of the workout
     if workout.user_id != current_user.id:
-        return redirect(url_for('main.workouts'))
+        return redirect(url_for('main.workout'))
     
     exercises = Exercise.query.all()
     
@@ -190,7 +189,7 @@ def edit_workout(id):
 
         db.session.commit()
         flash('Workout updated successfully!', 'success')
-        return redirect(url_for('main.workouts'))
+        return redirect(url_for('main.workout'))
     
     return render_template('workout/edit.html', workout=workout, exercises=exercises, workout_exercises=workout_exercises, workout_sets=workout_sets)
 
@@ -200,10 +199,10 @@ def delete_workout(id):
     workout = Workout.query.get_or_404(id)
 
     if workout.user_id != current_user.id: # Check if the user is the owner of the workout
-        return redirect(url_for('main.workouts'))
+        return redirect(url_for('main.workout'))
 
     db.session.delete(workout)
     db.session.commit()
 
     flash('Workout deleted successfully', 'success')
-    return redirect(url_for('main.workouts'))
+    return redirect(url_for('main.workout'))
