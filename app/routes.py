@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from .models import db, Exercise, Category, User, Workout, Workout_Exercise
+from .models import db, Exercise, Category, User, Workout, Workout_Exercise, ExerciseSet
 from .forms import LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
@@ -69,16 +69,16 @@ def workouts():
 @login_required
 def add_workout():
     exercises = Exercise.query.all()
-    
+
     if request.method == 'POST':
         name = request.form.get('name')
         date = request.form.get('date')
         note = request.form.get('note')
-        
+
         # Create the workout
         new_workout = Workout(
             name=name,
-            reps=0,  # Default values
+            reps=0,
             weight=0,
             duration=0,
             date=date,
@@ -87,50 +87,57 @@ def add_workout():
         )
         db.session.add(new_workout)
         db.session.flush()
-        
-        # Process selected exercises
-        for key, value in request.form.items():
-            if key.startswith('exercise_'):
+
+        # Loop through form keys to find selected exercises
+        for key in request.form:
+            if key.startswith('exercise_') and request.form.get(key) == 'on':
                 exercise_id = int(key.split('_')[1])
-                if value == 'on':  # Checkbox is checked
-                    sets = request.form.get(f'sets_{exercise_id}') or 0
-                    reps = request.form.get(f'reps_{exercise_id}') or 0
-                    weight = request.form.get(f'weight_{exercise_id}') or 0
-                    duration = request.form.get(f'duration_{exercise_id}') or 0
-                    
-                    workout_exercise = Workout_Exercise(
-                        workout_id=new_workout.id,
-                        exercise_id=exercise_id,
-                        sets=sets,
+
+                workout_exercise = Workout_Exercise(
+                    workout_id=new_workout.id,
+                    exercise_id=exercise_id
+                )
+                db.session.add(workout_exercise)
+                db.session.flush()
+
+                reps_list = request.form.getlist(f'reps_{exercise_id}[]')
+                weight_list = request.form.getlist(f'weight_{exercise_id}[]')
+                duration_list = request.form.getlist(f'duration_{exercise_id}[]')
+
+                for i in range(len(reps_list)):
+                    reps = int(reps_list[i]) if reps_list[i] else 0
+                    weight = float(weight_list[i]) if weight_list[i] else 0.0
+                    duration = int(duration_list[i]) if duration_list[i] else 0
+
+                    set_entry = ExerciseSet(
+                        workout_exercise_id=workout_exercise.id,
+                        set_number=i + 1,
                         reps=reps,
                         weight=weight,
                         duration=duration
                     )
-                    db.session.add(workout_exercise)
-        
+                    db.session.add(set_entry)
+
         db.session.commit()
         flash('Workout created successfully!', 'success')
         return redirect(url_for('main.workouts'))
-    
+
     return render_template('workout/add.html', exercises=exercises)
 
 @main.route('/workout/delete/<int:id>/', methods=['POST'])
 @login_required
 def delete_workout(id):
     workout = Workout.query.get_or_404(id)
-    
-    # Check if the workout belongs to the current user
+
+    # Permission check
     if workout.user_id != current_user.id and not current_user.is_admin:
         flash('You do not have permission to delete this workout', 'danger')
         return redirect(url_for('main.workouts'))
-    
-    # Delete associated workout exercises first
-    Workout_Exercise.query.filter_by(workout_id=id).delete()
-    
-    # Then delete the workout
+
+    # Let SQLAlchemy handle all cascading deletes
     db.session.delete(workout)
     db.session.commit()
-    
+
     flash('Workout deleted successfully', 'success')
     return redirect(url_for('main.workouts'))
 
