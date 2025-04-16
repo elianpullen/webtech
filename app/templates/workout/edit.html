@@ -1,78 +1,89 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container">
-    <h1>Edit Workout</h1>
-    <form method="POST">
-        <div class="form-group">
-            <label for="name">Workout Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ workout.name }}" required>
-        </div>
-        <div class="form-group">
-            <label for="date">Date</label>
-            <input type="date" class="form-control" id="date" name="date" value="{{ workout.date }}">
-        </div>
-        <div class="form-group">
-            <label for="note">Notes</label>
-            <textarea class="form-control" id="note" name="note" rows="3">{{ workout.note }}</textarea>
-        </div>
-        <h3>Select Exercises</h3>
-        <div class="row">
-            {% for exercise in exercises %}
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="exercise_{{ exercise.id }}"
-                                name="exercise_{{ exercise.id }}" {% if exercise.id in workout_exercises %} checked {%
-                                endif %}>
-                            <label class="form-check-label" for="exercise_{{ exercise.id }}">
-                                <h5>{{ exercise.name }}</h5>
-                            </label>
+<div class="bg-dark text-white min-vh-100 py-5">
+    <div class="container">
+        <h1 class="text-danger fw-bold mb-4">Edit Workout</h1>
+        <form method="POST">
+            <div class="mb-4">
+                <label for="name" class="form-label">Workout Name</label>
+                <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" id="name" name="name"
+                    value="{{ workout.name }}" required>
+            </div>
+            <div class="mb-4">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control bg-secondary text-white border-0 shadow-sm" id="date" name="date"
+                    value="{{ workout.date }}">
+            </div>
+            <div class="mb-5">
+                <label for="note" class="form-label">Notes</label>
+                <textarea class="form-control bg-secondary text-white border-0 shadow-sm" id="note" name="note"
+                    rows="3">{{ workout.note }}</textarea>
+            </div>
+
+            <h3 class="text-light mb-4">Select Exercises</h3>
+            <div class="row g-4">
+                {% for exercise in exercises %}
+                <div class="col-md-6">
+                    <div class="card bg-secondary text-white border-0 shadow rounded-4">
+                        <div class="card-body">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="exercise_{{ exercise.id }}"
+                                    name="exercise_{{ exercise.id }}" {% if exercise.id in workout_exercises %} checked
+                                    {% endif %}>
+                                <label class="form-check-label" for="exercise_{{ exercise.id }}">
+                                    <h5 class="mb-0">{{ exercise.name }}</h5>
+                                </label>
+                            </div>
+
+                            <div class="exercise-details mt-3" id="details_{{ exercise.id }}">
+                                {% set total_sets = workout_sets[exercise.id]|length if exercise.id in workout_sets else
+                                0 %}
+                                {% set max_sets = 4 %}
+
+                                {% for i in range(1, max_sets + 1) %}
+                                {% set existing_set = (workout_sets[exercise.id][i-1] if i <= total_sets else None) %}
+                                    <div class="border rounded p-3 mb-3 bg-dark">
+                                    <div class="form-group">
+                                        <label for="set_{{ exercise.id }}_{{ i }}_reps" class="form-label">Set {{ i }} -
+                                            Reps</label>
+                                        <input type="number" class="form-control bg-dark text-white border-0 shadow-sm"
+                                            id="set_{{ exercise.id }}_{{ i }}_reps"
+                                            name="set_{{ exercise.id }}_{{ i }}_reps"
+                                            value="{{ existing_set.reps if existing_set else '' }}">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="set_{{ exercise.id }}_{{ i }}_weight" class="form-label">Set {{ i }}
+                                            - Weight (kg)</label>
+                                        <input type="number" class="form-control bg-dark text-white border-0 shadow-sm"
+                                            id="set_{{ exercise.id }}_{{ i }}_weight"
+                                            name="set_{{ exercise.id }}_{{ i }}_weight"
+                                            value="{{ existing_set.weight if existing_set else '' }}">
+                                    </div>
+
+                                    <div class="form-group mb-0">
+                                        <label for="set_{{ exercise.id }}_{{ i }}_duration" class="form-label">Set {{ i
+                                            }} - Duration (seconds)</label>
+                                        <input type="number" class="form-control bg-dark text-white border-0 shadow-sm"
+                                            id="set_{{ exercise.id }}_{{ i }}_duration"
+                                            name="set_{{ exercise.id }}_{{ i }}_duration"
+                                            value="{{ existing_set.duration if existing_set else '' }}">
+                                    </div>
+                            </div>
+                            {% endfor %}
                         </div>
-
-                        <div class="exercise-details mt-3" id="details_{{ exercise.id }}">
-                            {% set total_sets = workout_sets[exercise.id]|length if exercise.id in workout_sets else 0
-                            %}
-                            {% set max_sets = 4 %}
-
-                            {% for i in range(1, max_sets + 1) %}
-                            {% set existing_set = (workout_sets[exercise.id][i-1] if i <= total_sets else None) %} <div
-                                class="border rounded p-3 mb-3 bg-light">
-                                <div class="form-group">
-                                    <label for="set_{{ exercise.id }}_{{ i }}_reps">Set {{ i }} - Reps</label>
-                                    <input type="number" class="form-control" id="set_{{ exercise.id }}_{{ i }}_reps"
-                                        name="set_{{ exercise.id }}_{{ i }}_reps"
-                                        value="{{ existing_set.reps if existing_set else '' }}">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="set_{{ exercise.id }}_{{ i }}_weight">Set {{ i }} - Weight (kg)</label>
-                                    <input type="number" class="form-control" id="set_{{ exercise.id }}_{{ i }}_weight"
-                                        name="set_{{ exercise.id }}_{{ i }}_weight"
-                                        value="{{ existing_set.weight if existing_set else '' }}">
-                                </div>
-
-                                <div class="form-group mb-0">
-                                    <label for="set_{{ exercise.id }}_{{ i }}_duration">Set {{ i }} - Duration
-                                        (seconds)</label>
-                                    <input type="number" class="form-control"
-                                        id="set_{{ exercise.id }}_{{ i }}_duration"
-                                        name="set_{{ exercise.id }}_{{ i }}_duration"
-                                        value="{{ existing_set.duration if existing_set else '' }}">
-                                </div>
-                        </div>
-                        {% endfor %}
                     </div>
                 </div>
             </div>
-        </div>
-        {% endfor %}
-</div>
+            {% endfor %}
+    </div>
 
-<button type="submit" class="btn btn-primary mt-3">Update Workout</button>
-<a href="{{ url_for('main.workouts') }}" class="btn btn-secondary mt-3 ml-2">Cancel</a>
-</form>
+    <button type="submit" class="btn btn-danger btn-lg mt-5">Update Workout</button>
+    <a href="{{ url_for('main.workouts') }}" class="btn btn-outline-secondary btn-lg mt-5 ms-3">Cancel</a>
+    </form>
 </div>
+</div>
+{% endblock %}
 
 <script>
     // Toggle exercise details visibility based on checkbox
@@ -92,4 +103,3 @@
         });
     });
 </script>
-{% endblock %}

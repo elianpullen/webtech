@@ -151,6 +151,21 @@
     font-size: 0.9rem;
 }
 
+.custom-nav-link {
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}   
+
+.custom-nav-link:hover {
+    color: #f8f9fa;
+    font-weight: bold;
+}
+
+.form-control::placeholder {
+    color: #6c757d;
+}
+
 @media (max-width: 576px) {
     .login-container {
         padding: 1.5rem;

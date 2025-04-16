@@ -1,62 +1,66 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container">
-    <h1>Create New Workout</h1>
-    <form method="POST">
-        <div class="form-group">
-            <label for="name">Workout Name</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-        </div>
-        <div class="form-group">
-            <label for="date">Date</label>
-            <input type="date" class="form-control" id="date" name="date">
-        </div>
-        <div class="form-group">
-            <label for="note">Notes</label>
-            <textarea class="form-control" id="note" name="note" rows="3"></textarea>
-        </div>
+<div class="bg-dark text-white min-vh-100 py-5">
+    <div class="container">
+        <h1 class="text-danger fw-bold mb-4">Create New Workout</h1>
+        <form method="POST">
+            <div class="mb-4">
+                <label for="name" class="form-label">Workout Name</label>
+                <input type="text" class="form-control bg-secondary text-white border-0" id="name" name="name" required>
+            </div>
+            <div class="mb-4">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control bg-secondary text-white border-0" id="date" name="date">
+            </div>
+            <div class="mb-5">
+                <label for="note" class="form-label">Notes</label>
+                <textarea class="form-control bg-secondary text-white border-0" id="note" name="note"
+                    rows="3"></textarea>
+            </div>
 
-        <h3>Select Exercises</h3>
-        <div class="row">
-            {% for exercise in exercises %}
-            <div class="col-md-6 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="exercise_{{ exercise.id }}"
-                                name="exercise_{{ exercise.id }}">
-                            <label class="form-check-label" for="exercise_{{ exercise.id }}">
-                                <h5>{{ exercise.name }}</h5>
-                            </label>
-                        </div>
+            <h3 class="mb-4">Select Exercises</h3>
+            <div class="row g-4">
+                {% for exercise in exercises %}
+                <div class="col-md-6">
+                    <div class="card bg-secondary text-white border-0 shadow rounded-4">
+                        <div class="card-body">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="exercise_{{ exercise.id }}"
+                                    name="exercise_{{ exercise.id }}">
+                                <label class="form-check-label" for="exercise_{{ exercise.id }}">
+                                    <h5 class="mb-0">{{ exercise.name }}</h5>
+                                </label>
+                            </div>
 
-                        <div class="exercise-details mt-2" id="details_{{ exercise.id }}">
-                            <div class="set-group" id="set_group_{{ exercise.id }}">
-                                <div class="form-row mb-2 set-row">
-                                    <div class="col">
-                                        <input type="number" class="form-control" name="reps_{{ exercise.id }}[]"
-                                            placeholder="Reps">
-                                    </div>
-                                    <div class="col">
-                                        <input type="number" class="form-control" name="weight_{{ exercise.id }}[]"
-                                            placeholder="Weight (kg)">
-                                    </div>
-                                    <div class="col">
-                                        <input type="number" class="form-control" name="duration_{{ exercise.id }}[]"
-                                            placeholder="Duration (sec)">
+                            <div class="exercise-details mt-3" id="details_{{ exercise.id }}">
+                                <div class="set-group" id="set_group_{{ exercise.id }}">
+                                    <div class="row mb-2 set-row gx-2">
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="reps_{{ exercise.id }}[]"
+                                                placeholder="Reps">
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control" name="weight_{{ exercise.id }}[]"
+                                                placeholder="Weight (kg)">
+                                        </div>
+                                        <div class="col">
+                                            <input type="number" class="form-control"
+                                                name="duration_{{ exercise.id }}[]" placeholder="Duration (sec)">
+                                        </div>
                                     </div>
                                 </div>
+                                <button type="button" class="btn btn-outline-light btn-sm mt-2"
+                                    onclick="addSet({{ exercise.id }})">Add Set</button>
                             </div>
-                            <button type="button" class="btn btn-sm btn-secondary"
-                                onclick="addSet({{ exercise.id }})">Add Set</button>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Create Workout</button>
-    </form>
+
+            <button type="submit" class="btn btn-danger btn-lg mt-5">Create Workout</button>
+        </form>
+    </div>
 </div>
 
 <script>
@@ -76,19 +80,26 @@
 
     function addSet(exerciseId) {
         const setGroup = document.getElementById('set_group_' + exerciseId);
+        const currentSets = setGroup.querySelectorAll('.set-row').length;
+
+        if (currentSets >= 4) {
+            alert("You can only add up to 4 sets per exercise.");
+            return;
+        }
+
         const newRow = document.createElement('div');
-        newRow.classList.add('form-row', 'mb-2', 'set-row');
+        newRow.classList.add('row', 'mb-2', 'gx-2', 'set-row');
         newRow.innerHTML = `
-            <div class="col">
-                <input type="number" class="form-control" name="reps_${exerciseId}[]" placeholder="Reps">
-            </div>
-            <div class="col">
-                <input type="number" class="form-control" name="weight_${exerciseId}[]" placeholder="Weight (kg)">
-            </div>
-            <div class="col">
-                <input type="number" class="form-control" name="duration_${exerciseId}[]" placeholder="Duration (sec)">
-            </div>
-        `;
+        <div class="col">
+            <input type="number" class="form-control" name="reps_${exerciseId}[]" placeholder="Reps">
+        </div>
+        <div class="col">
+            <input type="number" class="form-control" name="weight_${exerciseId}[]" placeholder="Weight (kg)">
+        </div>
+        <div class="col">
+            <input type="number" class="form-control" name="duration_${exerciseId}[]" placeholder="Duration (sec)">
+        </div>
+    `;
         setGroup.appendChild(newRow);
     }
 </script>
