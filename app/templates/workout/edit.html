@@ -43,24 +43,7 @@
                                 {% for i in range(1, max_sets + 1) %}
                                 {% set existing_set = (workout_sets[exercise.id][i-1] if i <= total_sets else None) %}
                                     <div class="border rounded p-3 mb-3 bg-dark">
-                                    <div class="form-group">
-                                        <label for="set_{{ exercise.id }}_{{ i }}_reps" class="form-label">Set {{ i }} -
-                                            Reps</label>
-                                        <input type="number" class="form-control bg-dark text-white border-0 shadow-sm"
-                                            id="set_{{ exercise.id }}_{{ i }}_reps"
-                                            name="set_{{ exercise.id }}_{{ i }}_reps"
-                                            value="{{ existing_set.reps if existing_set else '' }}">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="set_{{ exercise.id }}_{{ i }}_weight" class="form-label">Set {{ i }}
-                                            - Weight (kg)</label>
-                                        <input type="number" class="form-control bg-dark text-white border-0 shadow-sm"
-                                            id="set_{{ exercise.id }}_{{ i }}_weight"
-                                            name="set_{{ exercise.id }}_{{ i }}_weight"
-                                            value="{{ existing_set.weight if existing_set else '' }}">
-                                    </div>
-
+                                    {% if exercise.category.name == 'Cardio' %}
                                     <div class="form-group mb-0">
                                         <label for="set_{{ exercise.id }}_{{ i }}_duration" class="form-label">Set {{ i
                                             }} - Duration (seconds)</label>
@@ -69,6 +52,24 @@
                                             name="set_{{ exercise.id }}_{{ i }}_duration"
                                             value="{{ existing_set.duration if existing_set else '' }}">
                                     </div>
+                                    {% else %}
+                                    <div class="form-group">
+                                        <label for="set_{{ exercise.id }}_{{ i }}_reps" class="form-label">Set {{ i }} -
+                                            Reps</label>
+                                        <input type="number" class="form-control bg-dark text-white border-0 shadow-sm"
+                                            id="set_{{ exercise.id }}_{{ i }}_reps"
+                                            name="set_{{ exercise.id }}_{{ i }}_reps"
+                                            value="{{ existing_set.reps if existing_set else '' }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="set_{{ exercise.id }}_{{ i }}_weight" class="form-label">Set {{ i }}
+                                            - Weight (kg)</label>
+                                        <input type="number" class="form-control bg-dark text-white border-0 shadow-sm"
+                                            id="set_{{ exercise.id }}_{{ i }}_weight"
+                                            name="set_{{ exercise.id }}_{{ i }}_weight"
+                                            value="{{ existing_set.weight if existing_set else '' }}">
+                                    </div>
+                                    {% endif%}
                             </div>
                             {% endfor %}
                         </div>

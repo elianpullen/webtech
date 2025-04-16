@@ -35,6 +35,12 @@
                             <div class="exercise-details mt-3" id="details_{{ exercise.id }}">
                                 <div class="set-group" id="set_group_{{ exercise.id }}">
                                     <div class="row mb-2 set-row gx-2">
+                                        {% if exercise.category.name == 'Cardio' %}
+                                        <div class="col">
+                                            <input type="number" class="form-control"
+                                                name="duration_{{ exercise.id }}[]" placeholder="Duration (sec)">
+                                        </div>
+                                        {% else %}
                                         <div class="col">
                                             <input type="number" class="form-control" name="reps_{{ exercise.id }}[]"
                                                 placeholder="Reps">
@@ -43,10 +49,7 @@
                                             <input type="number" class="form-control" name="weight_{{ exercise.id }}[]"
                                                 placeholder="Weight (kg)">
                                         </div>
-                                        <div class="col">
-                                            <input type="number" class="form-control"
-                                                name="duration_{{ exercise.id }}[]" placeholder="Duration (sec)">
-                                        </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <button type="button" class="btn btn-outline-light btn-sm mt-2"

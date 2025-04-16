@@ -86,13 +86,17 @@ def add_workout():
             user_id=current_user.id
         )
         db.session.add(new_workout)
-        db.session.flush() # Flush to get the new_workout.id
+        db.session.flush()  # Get new_workout.id before committing
 
         # Loop through form keys to find selected exercises
         for key in request.form:
-            if key.startswith('exercise_') and request.form.get(key) == 'on': # Check if the checkbox is selected
-                exercise_id = int(key.split('_')[1]) # Extract exercise_id from the key
+            if key.startswith('exercise_') and request.form.get(key) == 'on':
+                try:
+                    exercise_id = int(key.split('_')[1])
+                except (IndexError, ValueError):
+                    continue  # skip malformed input just in case
 
+                # Create association table entry
                 workout_exercise = Workout_Exercise(
                     workout_id=new_workout.id,
                     exercise_id=exercise_id
@@ -100,14 +104,18 @@ def add_workout():
                 db.session.add(workout_exercise)
                 db.session.flush()
 
-                reps_list = request.form.getlist(f'reps_{exercise_id}[]') # Get reps for each exercise
+                # Get form data (may be empty depending on exercise type)
+                reps_list = request.form.getlist(f'reps_{exercise_id}[]')
                 weight_list = request.form.getlist(f'weight_{exercise_id}[]')
                 duration_list = request.form.getlist(f'duration_{exercise_id}[]')
 
-                for i in range(len(reps_list)): # Loop through reps, weight, and duration for each exercise
-                    reps = int(reps_list[i]) if reps_list[i] else 0
-                    weight = float(weight_list[i]) if weight_list[i] else 0.0
-                    duration = int(duration_list[i]) if duration_list[i] else 0
+                # Determine the longest list to loop through safely
+                max_len = max(len(reps_list), len(weight_list), len(duration_list))
+
+                for i in range(max_len):
+                    reps = int(reps_list[i]) if i < len(reps_list) and reps_list[i] else 0
+                    weight = float(weight_list[i]) if i < len(weight_list) and weight_list[i] else 0.0
+                    duration = int(duration_list[i]) if i < len(duration_list) and duration_list[i] else 0
 
                     set_entry = ExerciseSet(
                         workout_exercise_id=workout_exercise.id,
@@ -123,6 +131,7 @@ def add_workout():
         return redirect(url_for('main.workouts'))
 
     return render_template('workout/add.html', exercises=exercises)
+
 
 @main.route('/workout/edit/<int:id>/', methods=['GET', 'POST'])
 @login_required
