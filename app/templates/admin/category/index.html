@@ -4,6 +4,11 @@
   <thead>
     <tr>
       <th colspan="5">
+        <div class="d-flex justify-content-end mb-4">
+          <a href="{{ url_for('admin.index') }}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Admin Panel
+          </a>
+        </div>
         <div class="d-flex justify-content-between align-items-center">
           <p class="text-white mb-0">Category List</p>
           <a href="{{ url_for('admin.add_category') }}" class="btn btn-success text-white text-decoration-none">

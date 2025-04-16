@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mt-5 p-4 rounded bg-dark text-white">
+    <div class="d-flex justify-content-end mb-4">
+        <a href="{{ url_for('admin.user') }}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Users
+        </a>
+    </div>
     <h1 class="text-danger text-center mb-4">Edit User</h1>
     <form action="" method="POST">
         <div class="mb-3" id="name">
@@ -10,7 +15,8 @@
 
         <div class="mb-3" id="password">
             <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" value="{{ user.password }}" required>
+            <input type="password" class="form-control" id="password" name="password" value="{{ user.password }}"
+                required>
         </div>
 
         <div class="mb-3">

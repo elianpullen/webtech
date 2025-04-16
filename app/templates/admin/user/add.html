@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mt-5 p-4 rounded bg-dark text-white">
+    <div class="d-flex justify-content-end mb-4">
+        <a href="{{ url_for('admin.user') }}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Users
+        </a>
+    </div>
     <h1 class="text-danger text-center mb-4">Add New User</h1>
     <form action="{{ url_for('admin.add_user') }}" method="POST">
         <div class="mb-3" id="username">
