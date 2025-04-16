@@ -155,7 +155,7 @@
     color: white;
     text-decoration: none;
     transition: all 0.3s ease;
-}   
+}
 
 .custom-nav-link:hover {
     color: #f8f9fa;
@@ -164,6 +164,11 @@
 
 .form-control::placeholder {
     color: #6c757d;
+}
+
+.custom-rounded-table {
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 @media (max-width: 576px) {

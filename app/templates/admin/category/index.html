@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<table class="table table-dark table-striped">
+<table class="table table-dark table-striped custom-rounded-table">
   <thead>
     <tr>
-      <th colspan="5" class="">
+      <th colspan="5">
         <div class="d-flex justify-content-between align-items-center">
           <p class="text-white mb-0">Category List</p>
           <a href="{{ url_for('admin.add_category') }}" class="btn btn-success text-white text-decoration-none">
@@ -33,7 +33,6 @@
           <button type="submit" class="btn btn-danger">Delete</button>
         </form>
       </td>
-
     </tr>
     {% endfor %}
   </tbody>
