@@ -1,76 +1,74 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <div class="container">
     <h1>Create New Workout</h1>
-    
     <form method="POST">
         <div class="form-group">
             <label for="name">Workout Name</label>
             <input type="text" class="form-control" id="name" name="name" required>
         </div>
-        
         <div class="form-group">
             <label for="date">Date</label>
             <input type="date" class="form-control" id="date" name="date">
         </div>
-        
         <div class="form-group">
             <label for="note">Notes</label>
             <textarea class="form-control" id="note" name="note" rows="3"></textarea>
         </div>
-        
+
         <h3>Select Exercises</h3>
-        
         <div class="row">
             {% for exercise in exercises %}
             <div class="col-md-6 mb-3">
                 <div class="card">
                     <div class="card-body">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="exercise_{{ exercise.id }}" name="exercise_{{ exercise.id }}">
+                            <input class="form-check-input" type="checkbox" id="exercise_{{ exercise.id }}"
+                                name="exercise_{{ exercise.id }}">
                             <label class="form-check-label" for="exercise_{{ exercise.id }}">
                                 <h5>{{ exercise.name }}</h5>
                             </label>
                         </div>
-                        
+
                         <div class="exercise-details mt-2" id="details_{{ exercise.id }}">
                             <div class="set-group" id="set_group_{{ exercise.id }}">
                                 <div class="form-row mb-2 set-row">
                                     <div class="col">
-                                        <input type="number" class="form-control" name="reps_{{ exercise.id }}[]" placeholder="Reps">
+                                        <input type="number" class="form-control" name="reps_{{ exercise.id }}[]"
+                                            placeholder="Reps">
                                     </div>
                                     <div class="col">
-                                        <input type="number" class="form-control" name="weight_{{ exercise.id }}[]" placeholder="Weight (kg)">
+                                        <input type="number" class="form-control" name="weight_{{ exercise.id }}[]"
+                                            placeholder="Weight (kg)">
                                     </div>
                                     <div class="col">
-                                        <input type="number" class="form-control" name="duration_{{ exercise.id }}[]" placeholder="Duration (sec)">
+                                        <input type="number" class="form-control" name="duration_{{ exercise.id }}[]"
+                                            placeholder="Duration (sec)">
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-sm btn-secondary" onclick="addSet({{ exercise.id }})">Add Set</button>
+                            <button type="button" class="btn btn-sm btn-secondary"
+                                onclick="addSet({{ exercise.id }})">Add Set</button>
                         </div>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-        
         <button type="submit" class="btn btn-primary mt-3">Create Workout</button>
     </form>
 </div>
 
 <script>
-    // Show/hide exercise details when checkbox is clicked
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        
-        checkboxes.forEach(function(checkbox) {
+
+        checkboxes.forEach(function (checkbox) {
             const id = checkbox.id.split('_')[1];
             const details = document.getElementById('details_' + id);
             details.style.display = 'none';
-            
-            checkbox.addEventListener('change', function() {
+
+            checkbox.addEventListener('change', function () {
                 details.style.display = this.checked ? 'block' : 'none';
             });
         });
