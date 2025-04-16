@@ -129,9 +129,8 @@ def add_workout():
 def delete_workout(id):
     workout = Workout.query.get_or_404(id)
 
-    # Permission check
-    if workout.user_id != current_user.id and not current_user.is_admin:
-        flash('You do not have permission to delete this workout', 'danger')
+    # Check if the user is the owner of the workout
+    if workout.user_id != current_user.id:
         return redirect(url_for('main.workouts'))
 
     # Let SQLAlchemy handle all cascading deletes
@@ -146,44 +145,57 @@ def delete_workout(id):
 def edit_workout(id):
     workout = Workout.query.get_or_404(id)
     
-    # Check if the workout belongs to the current user
-    if workout.user_id != current_user.id and not current_user.is_admin:
-        flash('You do not have permission to edit this workout', 'danger')
+    # Check if the user is the owner of the workout
+    if workout.user_id != current_user.id:
         return redirect(url_for('main.workouts'))
     
     exercises = Exercise.query.all()
-    workout_exercises = {we.exercise_id: we for we in workout.workout_exercises}
     
+    # Mapping existing exercises and sets
+    workout_exercises = {we.exercise_id: we for we in workout.workout_exercises}
+    workout_sets = {}
+    for we in workout.workout_exercises:
+        sets = ExerciseSet.query.filter_by(workout_exercise_id=we.id).order_by(ExerciseSet.set_number).all()
+        workout_sets[we.exercise_id] = sets
+
     if request.method == 'POST':
         workout.name = request.form.get('name')
         workout.date = request.form.get('date')
         workout.note = request.form.get('note')
         
-        # Delete existing workout exercises
-        Workout_Exercise.query.filter_by(workout_id=id).delete()
+        # Delete all related ExerciseSets first
+        for we in workout.workout_exercises:
+            ExerciseSet.query.filter_by(workout_exercise_id=we.id).delete()
+
+        # Then delete workout_exercises
+        Workout_Exercise.query.filter_by(workout_id=workout.id).delete()
         
-        # Process selected exercises
-        for key, value in request.form.items():
-            if key.startswith('exercise_'):
-                exercise_id = int(key.split('_')[1])
-                if value == 'on':  # Checkbox is checked
-                    sets = request.form.get(f'sets_{exercise_id}') or 0
-                    reps = request.form.get(f'reps_{exercise_id}') or 0
-                    weight = request.form.get(f'weight_{exercise_id}') or 0
-                    duration = request.form.get(f'duration_{exercise_id}') or 0
-                    
-                    workout_exercise = Workout_Exercise(
-                        workout_id=workout.id,
-                        exercise_id=exercise_id,
-                        sets=sets,
-                        reps=reps,
-                        weight=weight,
-                        duration=duration
-                    )
-                    db.session.add(workout_exercise)
-        
+        db.session.flush()  # So we can re-use workout.id safely
+
+        # Recreate all workout_exercises and sets
+        for exercise in exercises:
+            if request.form.get(f'exercise_{exercise.id}') == 'on':
+                new_we = Workout_Exercise(workout_id=workout.id, exercise_id=exercise.id)
+                db.session.add(new_we)
+                db.session.flush()  # get new_we.id without committing
+
+                for i in range(1, 11):  # Up to 10 sets
+                    reps = request.form.get(f'set_{exercise.id}_{i}_reps')
+                    weight = request.form.get(f'set_{exercise.id}_{i}_weight')
+                    duration = request.form.get(f'set_{exercise.id}_{i}_duration')
+
+                    if reps or weight or duration:
+                        new_set = ExerciseSet(
+                            workout_exercise_id=new_we.id,
+                            set_number=i,
+                            reps=int(reps) if reps else 0,
+                            weight=float(weight) if weight else 0,
+                            duration=int(duration) if duration else 0
+                        )
+                        db.session.add(new_set)
+
         db.session.commit()
         flash('Workout updated successfully!', 'success')
         return redirect(url_for('main.workouts'))
     
-    return render_template('workout/edit.html', workout=workout, exercises=exercises, workout_exercises=workout_exercises)
+    return render_template('workout/edit.html', workout=workout, exercises=exercises, workout_exercises=workout_exercises, workout_sets=workout_sets)
