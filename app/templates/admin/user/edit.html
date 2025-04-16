@@ -23,7 +23,7 @@
         </div>
 
         <div class="mb-3" id="bodyweight">
-            <label for="bodyweight" class="form-label">Bodyweight</label>
+            <label for="bodyweight" class="form-label">Bodyweight (Optional)</label>
             {% if user['bodyweight'] == None %}
             <input type="float" class="form-control" id="bodyweight" name="bodyweight">
             {% else %}
@@ -32,7 +32,7 @@
         </div>
 
         <div class="mb-3" id="bodyfat">
-            <label for="bodyfat" class="form-label">Bodyfat</label>
+            <label for="bodyfat" class="form-label">Bodyfat (Optional)</label>
             {% if user['bodyfat'] == None %}
             <input type="float" class="form-control" id="bodyfat" name="bodyfat">
             {% else %}
