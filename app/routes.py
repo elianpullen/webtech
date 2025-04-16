@@ -20,7 +20,7 @@ def register():
 
         user = User(
             username=form.username.data,
-            password=form.password.data  # Pass plaintext password
+            password=form.password.data
         )
 
         db.session.add(user)
@@ -73,7 +73,7 @@ def add_workout():
     if request.method == 'POST':
         name = request.form.get('name')
         date = request.form.get('date')
-        note = request.form.get('note')
+        note = request.form.get('note') or ""
 
         # Create the workout
         new_workout = Workout(
@@ -86,12 +86,12 @@ def add_workout():
             user_id=current_user.id
         )
         db.session.add(new_workout)
-        db.session.flush()
+        db.session.flush() # Flush to get the new_workout.id
 
         # Loop through form keys to find selected exercises
         for key in request.form:
-            if key.startswith('exercise_') and request.form.get(key) == 'on':
-                exercise_id = int(key.split('_')[1])
+            if key.startswith('exercise_') and request.form.get(key) == 'on': # Check if the checkbox is selected
+                exercise_id = int(key.split('_')[1]) # Extract exercise_id from the key
 
                 workout_exercise = Workout_Exercise(
                     workout_id=new_workout.id,
@@ -100,11 +100,11 @@ def add_workout():
                 db.session.add(workout_exercise)
                 db.session.flush()
 
-                reps_list = request.form.getlist(f'reps_{exercise_id}[]')
+                reps_list = request.form.getlist(f'reps_{exercise_id}[]') # Get reps for each exercise
                 weight_list = request.form.getlist(f'weight_{exercise_id}[]')
                 duration_list = request.form.getlist(f'duration_{exercise_id}[]')
 
-                for i in range(len(reps_list)):
+                for i in range(len(reps_list)): # Loop through reps, weight, and duration for each exercise
                     reps = int(reps_list[i]) if reps_list[i] else 0
                     weight = float(weight_list[i]) if weight_list[i] else 0.0
                     duration = int(duration_list[i]) if duration_list[i] else 0
@@ -123,22 +123,6 @@ def add_workout():
         return redirect(url_for('main.workouts'))
 
     return render_template('workout/add.html', exercises=exercises)
-
-@main.route('/workout/delete/<int:id>/', methods=['POST'])
-@login_required
-def delete_workout(id):
-    workout = Workout.query.get_or_404(id)
-
-    # Check if the user is the owner of the workout
-    if workout.user_id != current_user.id:
-        return redirect(url_for('main.workouts'))
-
-    # Let SQLAlchemy handle all cascading deletes
-    db.session.delete(workout)
-    db.session.commit()
-
-    flash('Workout deleted successfully', 'success')
-    return redirect(url_for('main.workouts'))
 
 @main.route('/workout/edit/<int:id>/', methods=['GET', 'POST'])
 @login_required
@@ -199,3 +183,17 @@ def edit_workout(id):
         return redirect(url_for('main.workouts'))
     
     return render_template('workout/edit.html', workout=workout, exercises=exercises, workout_exercises=workout_exercises, workout_sets=workout_sets)
+
+@main.route('/workout/delete/<int:id>/', methods=['POST'])
+@login_required
+def delete_workout(id):
+    workout = Workout.query.get_or_404(id)
+
+    if workout.user_id != current_user.id: # Check if the user is the owner of the workout
+        return redirect(url_for('main.workouts'))
+
+    db.session.delete(workout)
+    db.session.commit()
+
+    flash('Workout deleted successfully', 'success')
+    return redirect(url_for('main.workouts'))
