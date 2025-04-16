@@ -6,22 +6,26 @@ from flask_login import login_required
 
 admin = Blueprint('admin', __name__)
 
+def blueprint_admin_required():
+    @admin.before_request
+    @login_required
+    def check_admin():
+        if not current_user.is_admin:
+            flash('Admin access required.', 'danger')
+            return redirect(url_for('main.index'))
+
+blueprint_admin_required()
+
 @admin.route('')
-@login_required
-@admin_required
 def index():
     return render_template('admin/index.html')
 
 @admin.route('user/')
-@login_required
-@admin_required
 def user():
     users = User.query.all()
     return render_template("admin/user/index.html/", users=users)
 
 @admin.route('user/add/', methods=['GET', 'POST'])
-@login_required
-@admin_required
 def add_user():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -38,8 +42,6 @@ def add_user():
     return render_template('admin/user/add.html')
 
 @admin.route('user/edit/<int:id>/', methods=['GET', 'POST'])
-@login_required
-@admin_required
 def edit_user(id):
     user = User.query.get_or_404(id)
     if request.method == 'POST':
@@ -55,8 +57,6 @@ def edit_user(id):
     return render_template('admin/user/edit.html', user=user)
 
 @admin.route('user/delete/<int:id>', methods=['POST'])
-@login_required
-@admin_required
 def delete_user(id):
     user = User.query.get_or_404(id)
     db.session.delete(user)
@@ -64,15 +64,11 @@ def delete_user(id):
     return redirect(url_for('admin.user'))
 
 @admin.route('exercise/')
-@login_required
-@admin_required
 def exercise():
     exercises = Exercise.query.all()
     return render_template('admin/exercise/index.html', exercises=exercises)
 
 @admin.route('exercise/add/', methods=['GET', 'POST'])
-@login_required
-@admin_required
 def add_exercise():
     categories = Category.query.all()
     if request.method == 'POST':
@@ -86,8 +82,6 @@ def add_exercise():
     return render_template('admin/exercise/add.html', categories=categories)
 
 @admin.route('exercise/edit/<int:id>/', methods=['GET', 'POST'])
-@login_required
-@admin_required
 def edit_exercise(id):
     categories = Category.query.all()
     exercise = Exercise.query.get_or_404(id)
@@ -100,8 +94,6 @@ def edit_exercise(id):
     return render_template('admin/exercise/edit.html', exercise=exercise, categories=categories)
 
 @admin.route('exercise/delete/<int:id>/', methods=['POST'])
-@login_required
-@admin_required
 def delete_exercise(id):
     exercise = Exercise.query.get_or_404(id)
     db.session.delete(exercise)
@@ -109,15 +101,11 @@ def delete_exercise(id):
     return redirect(url_for('admin.exercise'))
 
 @admin.route('category/')
-@login_required
-@admin_required
 def category():
     categories = Category.query.all()
     return render_template("admin/category/index.html/", categories=categories)  
 
 @admin.route('category/add/', methods=['GET', 'POST'])
-@login_required
-@admin_required
 def add_category():
     if request.method == 'POST':
         name = request.form.get('name')
@@ -141,8 +129,6 @@ def edit_category(id):
     return render_template('admin/category/edit.html', category=category)
 
 @admin.route('category/delete/<int:id>', methods=['POST'])
-@login_required
-@admin_required
 def delete_category(id):
     category = Category.query.get_or_404(id)
     db.session.delete(category)
