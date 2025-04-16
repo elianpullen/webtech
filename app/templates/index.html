@@ -1,22 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="bg-dark text-white min-vh-100 rounded">
-    <div class="container mt-5 p-4 rounded">
+<div class="bg-dark text-white min-vh-100 d-flex align-items-center justify-content-center">
+    <div class="container text-center py-5">
         {% if current_user.is_authenticated %}
-        <h1 class="text-danger">Welcome to Your Exercise Tracker, {{ current_user.username }}!</h1>
+        <h1 class="display-4 fw-bold text-danger mb-3">Hey {{ current_user.username }}!</h1>
         {% else %}
-        <h1 class="text-danger">Welcome to Your Exercise Tracker!</h1>
+        <h1 class="display-4 fw-bold text-danger mb-3">Welcome to Your Exercise Tracker!</h1>
         {% endif %}
-        <p>Track your workouts.</p>
+        <p class="lead mb-5">Start logging your workouts and keep track of your progress.</p>
 
-        <div class="row mt-4">
-            <div class="col-md-4 d-flex mb-4">
-                <div class="card bg-secondary text-white border-0 flex-fill">
-                    <div class="card-body">
-                        <h4 class="card-title text-body">Log a Workout</h4>
-                        <p class="card-text">Record your exercises and track your performance.</p>
-                        <a href="{{ url_for('main.workouts') }}" class="btn btn-danger">Log Workout</a>
-                    </div>
+        <div class="d-flex justify-content-center">
+            <div class="card bg-secondary text-white border-0 shadow-lg rounded-4" style="max-width: 400px;">
+                <div class="card-body">
+                    <h4 class="card-title text-light">Log a Workout</h4>
+                    <p class="card-text">Record exercises, reps, sets, and more.</p>
+                    <a href="{{ url_for('main.workouts') }}" class="btn btn-danger btn-lg mt-3 w-100">Go to Workout Log</a>
                 </div>
             </div>
         </div>

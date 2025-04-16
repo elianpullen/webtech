@@ -25,19 +25,21 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('main.index') }}">Home</a>
+                        <a class="nav-link custom-nav-link" href="{{ url_for('main.index') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
+                        <a class="nav-link custom-nav-link" href="{{ url_for('main.about') }}">About</a>
                     </li>
                     {% if current_user.is_authenticated %}
-                    <li class="nav-link"><a href="{{ url_for('main.logout') }}">Uitloggen</a></li>
+                    <li class="nav-link "><a href="{{ url_for('main.logout') }}" class="custom-nav-link">Uitloggen</a>
+                    </li>
                     {% if current_user.is_admin %}
-                    <li class="nav-link"><a href="{{ url_for('admin.index') }}">Admin</a></li>
+                    <li class="nav-link"><a href="{{ url_for('admin.index') }}" class="custom-nav-link">Admin</a></li>
                     {% endif %}
                     {% else %}
-                    <li class="nav-link"><a href="{{ url_for('main.login') }}">Inloggen</a></li>
-                    <li class="nav-link"><a href="{{ url_for('main.register') }}">Registreren</a></li>
+                    <li class="nav-link"><a href="{{ url_for('main.login') }}" class="custom-nav-link">Inloggen</a></li>
+                    <li class="nav-link"><a href="{{ url_for('main.register') }}"
+                            class="custom-nav-link">Registreren</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -61,10 +63,6 @@
     <footer class="bg-dark text-white py-3 mt-5">
         <div class="container text-center">
             <p class="mb-0">&copy; 2025 My Exercise Tracker. All rights reserved.</p>
-            <p class="mb-0">
-                <a href="{{ url_for('main.about') }}" class="text-white text-decoration-none">About</a>
-
-            </p>
         </div>
     </footer>
 
