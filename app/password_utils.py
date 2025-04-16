@@ -6,7 +6,7 @@ class PasswordMixin:
         raise AttributeError('password is not readable')
 
     @password.setter
-    def password(self, password): # 
+    def password(self, password): # hash password before storing
         self.password_hash = generate_password_hash(password)
 
     def verify_password(self, password): # check if given password matches stored hash

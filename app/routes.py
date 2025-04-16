@@ -138,6 +138,7 @@ def edit_workout(id):
     # Mapping existing exercises and sets
     workout_exercises = {we.exercise_id: we for we in workout.workout_exercises}
     workout_sets = {}
+    # Get sets for each exercise
     for we in workout.workout_exercises:
         sets = ExerciseSet.query.filter_by(workout_exercise_id=we.id).order_by(ExerciseSet.set_number).all()
         workout_sets[we.exercise_id] = sets
