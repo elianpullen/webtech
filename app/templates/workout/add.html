@@ -31,7 +31,7 @@
                         <div class="card-body">
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" id="exercise_{{ exercise.id }}"
-                                    name="exercise_{{ exercise.id }}">
+                                    name="exercise_{{ exercise.id }}" data-category="{{ exercise.category.name }}">
                                 <label class="form-check-label" for="exercise_{{ exercise.id }}">
                                     <h5 class="mb-0">{{ exercise.name }}</h5>
                                 </label>
@@ -95,19 +95,29 @@
             return;
         }
 
+        const checkbox = document.getElementById('exercise_' + exerciseId);
+        const category = checkbox.getAttribute('data-category');
+
         const newRow = document.createElement('div');
         newRow.classList.add('row', 'mb-2', 'gx-2', 'set-row');
-        newRow.innerHTML = `
-        <div class="col">
-            <input type="number" class="form-control" name="reps_${exerciseId}[]" placeholder="Reps">
-        </div>
-        <div class="col">
-            <input type="number" class="form-control" name="weight_${exerciseId}[]" placeholder="Weight (kg)">
-        </div>
-        <div class="col">
-            <input type="number" class="form-control" name="duration_${exerciseId}[]" placeholder="Duration (sec)">
-        </div>
-    `;
+
+        if (category === 'Cardio') {
+            newRow.innerHTML = `
+                <div class="col">
+                    <input type="number" class="form-control" name="duration_${exerciseId}[]" placeholder="Duration (sec)">
+                </div>
+            `;
+        } else {
+            newRow.innerHTML = `
+                <div class="col">
+                    <input type="number" class="form-control" name="reps_${exerciseId}[]" placeholder="Reps">
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" name="weight_${exerciseId}[]" placeholder="Weight (kg)">
+                </div>
+            `;
+        }
+
         setGroup.appendChild(newRow);
     }
 </script>
