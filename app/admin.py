@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from .models import db, Exercise, Category, User, Workout, Workout_Exercise
 from werkzeug.security import generate_password_hash
 from .utils import admin_required
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 admin = Blueprint('admin', __name__)
 
