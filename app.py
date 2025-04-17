@@ -55,17 +55,24 @@ class DatabaseInitializer:
     def create_default_exercises(self):
         """Create default exercises if they don't exist."""
         with self.app.app_context():
-            exercise_names = ['Bench Press', 'Back squat', 'Deadlift']
+            # Define exercises with their category IDs
+            exercises = [
+                ('Bench Press', 2),   # Fitness
+                ('Back squat', 2),    # Fitness
+                ('Deadlift', 2),      # Fitness
+                ('Stairmaster', 1),   # Cardio
+                ('Running', 1),       # Cardio
+            ]
 
-            for name in exercise_names:
-                existing_category = Exercise.query.filter_by(name=name).first()
-                if not existing_category:
-                    new_category = Exercise(name=name, category_id=2)
-                    db.session.add(new_category)
+            for name, category_id in exercises:
+                existing_exercise = Exercise.query.filter_by(name=name).first()
+                if not existing_exercise:
+                    new_exercise = Exercise(name=name, category_id=category_id)
+                    db.session.add(new_exercise)
                     print(f"{name} Exercise created!")
                 else:
                     print(f"Default {name} exercise already exists! No changes made.")
-        
+
             db.session.commit()
 
     def initialize_database(self):
