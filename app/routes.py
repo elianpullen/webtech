@@ -106,10 +106,10 @@ def add_workout():
                 weight_list = request.form.getlist(f'weight_{exercise_id}[]')
                 duration_list = request.form.getlist(f'duration_{exercise_id}[]')
 
-                # Determine the longest list to loop through safely
+                # Determine the longest list to loop through
                 max_len = max(len(reps_list), len(weight_list), len(duration_list))
 
-                for i in range(max_len):
+                for i in range(max_len): # if i is out of range, it will be skipped
                     reps = int(reps_list[i]) if i < len(reps_list) and reps_list[i] else 0
                     weight = float(weight_list[i]) if i < len(weight_list) and weight_list[i] else 0.0
                     duration = int(duration_list[i]) if i < len(duration_list) and duration_list[i] else 0
@@ -140,11 +140,10 @@ def edit_workout(id):
     
     exercises = Exercise.query.all()
     
-    # Mapping existing exercises and sets
+    # Create a dictionary to track which exercises are selected
     workout_exercises = {we.exercise_id: we for we in workout.workout_exercises}
     workout_sets = {}
-    # Get sets for each exercise
-    for we in workout.workout_exercises:
+    for we in workout.workout_exercises: # fetch all sets for this workout, ordered by set_number
         sets = ExerciseSet.query.filter_by(workout_exercise_id=we.id).order_by(ExerciseSet.set_number).all()
         workout_sets[we.exercise_id] = sets
 
@@ -169,11 +168,11 @@ def edit_workout(id):
                 db.session.add(new_we)
                 db.session.flush()  # get new_we.id without committing
 
-                for i in range(1, 11):  # Up to 10 sets
+                for i in range(1, 5):  # Only allow up to 4 sets
                     reps = request.form.get(f'set_{exercise.id}_{i}_reps')
                     weight = request.form.get(f'set_{exercise.id}_{i}_weight')
                     duration = request.form.get(f'set_{exercise.id}_{i}_duration')
-
+                
                     if reps or weight or duration:
                         new_set = ExerciseSet(
                             workout_exercise_id=new_we.id,
@@ -183,7 +182,7 @@ def edit_workout(id):
                             duration=int(duration) if duration else 0
                         )
                         db.session.add(new_set)
-
+                
         db.session.commit()
         flash('Workout updated successfully!', 'success')
         return redirect(url_for('main.workout'))
