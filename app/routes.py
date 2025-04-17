@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from .models import db, Exercise, Category, User, Workout, Workout_Exercise, ExerciseSet
 from .forms import LoginForm, RegistrationForm
 from werkzeug.security import generate_password_hash
@@ -25,6 +25,11 @@ def register():
 
         db.session.add(user)
         db.session.commit()
+
+        # Create a session for the new user
+        login_user(user)
+        session['username'] = user.username
+
         flash('Registration successful! Please login.', 'success')
         return redirect(url_for('main.login'))
 
@@ -40,6 +45,7 @@ def login():
         # Check user exists and password is correct
         if user and user.verify_password(form.password.data):
             login_user(user)
+            session['username'] = user.username
             flash('Logged in successfully!', 'success')
             next_page = request.args.get('next')
             return redirect(next_page or url_for('main.index'))
@@ -52,6 +58,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    session.pop('username', None)
     flash('Je bent nu uitgelogd!')
     return redirect(url_for('main.index'))
 
