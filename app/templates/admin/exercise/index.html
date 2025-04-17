@@ -36,7 +36,7 @@
         {% endif %}
       </td>
       <td>{{ exercise.category.name }}</td>
-      <td class="d-flex justify-content-start">
+      <td class="d-flex justify-content-start gap-2">
         <a href="{{ url_for('admin.edit_exercise', id=exercise.id) }}"
           class="btn btn-warning text-white text-decoration-none">
           Edit

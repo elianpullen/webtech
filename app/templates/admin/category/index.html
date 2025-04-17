@@ -28,7 +28,7 @@
     <tr>
       <td>{{ category['id']}}</td>
       <td>{{ category['name']}}</td>
-      <td class="d-flex justify-content-start">
+      <td class="d-flex justify-content-start gap-2">
         <a href="{{ url_for('admin.edit_category', id=category.id) }}"
           class="btn btn-warning text-white text-decoration-none">
           Edit
