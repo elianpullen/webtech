@@ -55,9 +55,6 @@ class Exercise(db.Model):
 class Workout(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    reps = db.Column(db.Integer, nullable=True)
-    weight = db.Column(db.Integer, nullable=True)
-    duration = db.Column(db.Integer, nullable=True)
     date = db.Column(db.Integer, nullable=True)
     note = db.Column(db.String(255), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) # foreign key to User model
@@ -68,11 +65,8 @@ class Workout(db.Model):
     workout_exercises = db.relationship('Workout_Exercise', back_populates='workout', lazy=True, cascade='all, delete-orphan')
 
     # constructor so elements can be accessed
-    def __init__(self, name, reps, weight, duration, date, note, user_id):
+    def __init__(self, name, date, note, user_id):
         self.name = name
-        self.reps = reps
-        self.weight = weight
-        self.duration = duration
         self.date = date
         self.note = note
         self.user_id = user_id

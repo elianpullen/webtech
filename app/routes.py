@@ -78,9 +78,6 @@ def add_workout():
         # Create the workout
         new_workout = Workout(
             name=name,
-            reps=0,
-            weight=0,
-            duration=0,
             date=date,
             note=note,
             user_id=current_user.id
