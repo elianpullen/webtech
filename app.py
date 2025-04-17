@@ -1,6 +1,6 @@
 import getpass
 from app import db, create_app
-from app.models import User, Category
+from app.models import User, Category, Exercise
 from werkzeug.security import generate_password_hash
 
 class DatabaseInitializer:
@@ -22,7 +22,7 @@ class DatabaseInitializer:
             admin = User.query.filter_by(username='admin').first()
             
             if not admin:
-                password = getpass.getpass("Voer een wachtwoord in voor het admin-account: ")
+                password = getpass.getpass("Enterr password for admin: ")
 
                 default_admin = User(
                     username='admin',
@@ -32,28 +32,48 @@ class DatabaseInitializer:
 
                 db.session.add(default_admin)
                 db.session.commit()
-                print("Standaard admin-account aangemaakt!")
+                print("Default admin-account created!")
             else:
-                print("Admin-account bestaat al! Geen wijzigingen aangebracht.")
+                print("Admin-account already exists! No changes made.")
     
-    def create_default_category(self):
-        """Create a default category if one doesn't exist."""
+    def create_default_categories(self):
+        """Create default categories if they don't exist."""
         with self.app.app_context():
-            default_category = Category.query.filter_by(name='Cardio').first()
+            category_names = ['Cardio', 'Fitness']
 
-            if not default_category:
-                default_category = Category(name='Cardio')
-                db.session.add(default_category)
-                db.session.commit()
-                print("Cardio categorie aangemaakt!")
-            else:
-                print("Standaard Cardio categorie bestaat al! Geen wijzigingen aangebracht.")
+            for name in category_names:
+                existing_category = Category.query.filter_by(name=name).first()
+                if not existing_category:
+                    new_category = Category(name=name)
+                    db.session.add(new_category)
+                    print(f"{name} Category created!")
+                else:
+                    print(f"Default {name} category already exists! No changes made.")
+        
+            db.session.commit()
+
+    def create_default_exercises(self):
+        """Create default exercises if they don't exist."""
+        with self.app.app_context():
+            exercise_names = ['Bench Press', 'Back squat', 'Deadlift']
+
+            for name in exercise_names:
+                existing_category = Exercise.query.filter_by(name=name).first()
+                if not existing_category:
+                    new_category = Exercise(name=name, category_id=2)
+                    db.session.add(new_category)
+                    print(f"{name} Exercise created!")
+                else:
+                    print(f"Default {name} exercise already exists! No changes made.")
+        
+            db.session.commit()
 
     def initialize_database(self):
         """Run all database initialization steps."""
         self.create_tables()
         self.create_admin()
-        self.create_default_category()
+        self.create_default_categories()
+        self.create_default_exercises()
 
 if __name__ == "__main__": # Only run this if this file is being run directly
     initializer = DatabaseInitializer()# Initialize database first
