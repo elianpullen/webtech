@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="login-outside-container">
+  <div class="login-inside-container">
+    <div class="login-header">
+    </div>
+    <div class="login-form">
+      <div class="form-header">
+        <h2 class="text-danger">
+          <i class="bi bi-shield-lock-fill"></i>
+          Inloggen
+        </h2>
+      </div>
+
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-body">
+          <div class="mb-3">
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control", size=32) }}
+          </div>
+
+          <div class="mb-3">
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control", size=32) }}
+          </div>
+        </div>
+
+        <div class="form-footer">
+          {{ form.submit(class="btn btn-danger") }}
+        </div>
+      </form>
+    </div>
+
+    <div class="login-footer">
+      <p>&copy; 2025 ModuMate. Alle rechten voorbehouden.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

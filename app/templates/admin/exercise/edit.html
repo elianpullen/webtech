@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 p-4 rounded bg-dark text-white">
+    <div class="d-flex justify-content-end mb-4">
+        <a href="{{ url_for('admin.exercise') }}" class="btn btn-outline-light btn-sm">
+          <i class="bi bi-arrow-left me-1"></i> Back to Exercises
+        </a>
+      </div>
+    <h1 class="text-danger text-center mb-4">Edit Exercise</h1>
+    <form action="" method="POST">
+        <div class="mb-3" id="name">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ exercise.name }}" required>
+        </div>
+
+        <div class="mb-3" id="description">
+            <label for="description" class="form-label">Description (Optional)</label>
+            <input type="text" class="form-control" id="description" name="description"
+                value="{{ exercise.description }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="category_id" class="form-label">Category</label>
+            <select class="form-select" id="category_id" name="category_id" required>
+                <option value="{{ exercise.category.id }}" selected>{{ exercise.category.name }}</option>
+                {% for category in categories %}
+                {% if category.id != exercise.category.id %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-danger w-100">Edit Exercise</button>
+    </form>
+    <a href="{{ url_for('admin.exercise') }}" class="btn btn-secondary w-100 mt-3">Back to Exercises</a>
+</div>
+{% endblock %}

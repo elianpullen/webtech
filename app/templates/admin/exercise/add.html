@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 p-4 rounded bg-dark text-white">
+    <div class="d-flex justify-content-end mb-4">
+        <a href="{{ url_for('admin.exercise') }}" class="btn btn-outline-light btn-sm">
+          <i class="bi bi-arrow-left me-1"></i> Back to Exercises
+        </a>
+      </div>
+    <h1 class="text-danger text-center mb-4">Add New Exercise</h1>
+    <form action="{{ url_for('admin.add_exercise') }}" method="POST">
+        <div class="mb-3" id="name">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+
+        <div class="mb-3" id="description">
+            <label for="description" class="form-label">Description (Optional)</label>
+            <input type="text" class="form-control" id="description" name="description">
+        </div>
+
+        <div class="mb-3" id="category">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select" id="category" name="category" required>
+                <option value="" disabled selected>Select a category</option>
+                {% for category in categories %}
+                <option value="{{category['id']}}">{{category['name']}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-danger w-100">Add Exercise</button>
+    </form>
+    <a href="{{ url_for('admin.exercise') }}" class="btn btn-secondary w-100 mt-3">Back to Exercises</a>
+</div>
+{% endblock %}

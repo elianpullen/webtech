@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="table table-dark table-striped custom-rounded-table">
+  <thead>
+    <tr>
+      <th colspan="5">
+        <div class="d-flex justify-content-end mb-4">
+          <a href="{{ url_for('admin.index') }}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Admin Panel
+          </a>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <p class="text-white mb-0">Exercises List</p>
+          <a href="{{ url_for('admin.add_exercise') }}" class="btn btn-success text-white text-decoration-none">
+            +
+          </a>
+        </div>
+      </th>
+    </tr>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Description</th>
+      <th scope="col">Category</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for exercise in exercises %}
+    <tr>
+      <td>{{ exercise['id']}}</td>
+      <td>{{ exercise['name']}}</td>
+      <td>
+        {% if exercise.description %}
+        {{ exercise['description']}}
+        {% endif %}
+      </td>
+      <td>{{ exercise.category.name }}</td>
+      <td class="d-flex justify-content-start gap-2">
+        <a href="{{ url_for('admin.edit_exercise', id=exercise.id) }}"
+          class="btn btn-warning text-white text-decoration-none">
+          Edit
+        </a>
+
+        <form action="{{ url_for('admin.delete_exercise', id=exercise.id) }}" method="POST">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </td>
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

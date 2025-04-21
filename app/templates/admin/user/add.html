@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 p-4 rounded bg-dark text-white">
+    <div class="d-flex justify-content-end mb-4">
+        <a href="{{ url_for('admin.user') }}" class="btn btn-outline-light btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Users
+        </a>
+    </div>
+    <h1 class="text-danger text-center mb-4">Add New User</h1>
+    <form action="{{ url_for('admin.add_user') }}" method="POST">
+        <div class="mb-3" id="username">
+            <label for="username" class="form-label">Name</label>
+            <input type="text" class="form-control" id="username" name="username" minlength="4" required>
+        </div>
+
+        <div class="mb-3" id="password">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" minlength="4" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="is_admin" class="form-label">Adminrights</label>
+            <input type="checkbox" name="is_admin" id="is_admin">
+        </div>
+
+        <div class="mb-3" id="bodyweight">
+            <label for="bodyweight" class="form-label">Bodyweight (Optional)</label>
+            <input type="float" class="form-control" id="bodyweight" name="bodyweight">
+        </div>
+
+        <div class="mb-3" id="bodyfat">
+            <label for="bodyfat" class="form-label">Bodyfat (Optional)</label>
+            <input type="float" class="form-control" id="bodyfat" name="bodyfat">
+        </div>
+        <button type="submit" class="btn btn-danger w-100">Add User</button>
+    </form>
+    <a href="{{ url_for('admin.user') }}" class="btn btn-secondary w-100 mt-3">Back to Users</a>
+</div>
+{% endblock %}
